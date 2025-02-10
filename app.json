@@ -23,6 +23,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "scheme": "your-app-scheme",
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
+
   }
 }
