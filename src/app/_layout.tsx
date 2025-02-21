@@ -23,8 +23,8 @@ const Rootlayout = () =>{
 
     return(
         <Stack screenOptions={{headerShown: false}}>
-            <Stack.Screen name="index"/>
             <Stack.Screen name = "(auth)/onboardingScreen" />
+            <Stack.Screen name="index"/>
             <Stack.Screen name = "(auth)/signInScreen" />
 
         </Stack>

@@ -1,23 +1,55 @@
+import ShareInput from "@/components/input/input.share";
 import { AppColors } from "@/utils/constant";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ShareButton from "@/components/button/button.share";
+import { Facebook, Google } from "@/assets/svgs";
 
 const SignInScreen = () => {
+    const [email, setEmail] = useState("");
+
     return(
-        <View style = {styles.container}>
-            <View style = {styles.signin}>
-                <Text style = {styles.title}>Let’s Travel you in.</Text>
-                <Text style = {styles.text}>Discover the World with Every Sign In</Text>
+  
+
+        <SafeAreaView style = {{flex: 1}}>
+            <View style = {styles.container}>
+
+                <View style = {[styles.logo]}>
+                    <Image source = {require("../../assets/logoFly.png")}/>
+                    <Text style = {[styles.title]}>Let's get you Login!</Text>
+                    <Text style = {styles.text}>Enter your information below</Text>
+                </View>
+                
+                <View style = {[styles.loginWith]}>
+                    <ShareButton 
+                        title="Google"
+                        onPress={()=>{}}
+                        btnStyle ={styles.btnStyle}
+                        textStyle = {{color: AppColors.BLACK}}
+                        icon = {<Google/>}
+                    />
+
+                    <ShareButton 
+                        title="Facebook"
+                        onPress={()=>{}}
+                        btnStyle ={styles.btnStyle}
+                        textStyle = {{color: AppColors.BLACK}}
+                        icon = {<Facebook/>}
+                    />
+                </View>
 
             </View>
+        </SafeAreaView>
 
-        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        backgroundColor: AppColors.TEAL_BLUE
+        backgroundColor: AppColors.WHITE
     },
     signin:{
         backgroundColor: AppColors.WHITE,
@@ -29,17 +61,31 @@ const styles = StyleSheet.create({
         height: "60%"
     },
     title:{
-        fontSize: 28,
+        fontSize: 40,
         fontWeight: 'bold',
-        paddingTop: 36,
-        paddingLeft: 28
+        paddingTop: 25,
     },
     text:{
         fontSize: 20,
-        paddingTop: 10,
-        paddingLeft: 28,
-        paddingRight: 78
+        paddingTop: 15,
+        opacity: 0.3
 
+    },
+    logo:{
+        alignItems: 'flex-start',
+        paddingVertical: 50,
+        paddingHorizontal: "5%"
+    },
+    loginWith:{
+        flexDirection: "row",
+        justifyContent: "space-around"
+    },
+    btnStyle:{
+        backgroundColor: AppColors.WHITE,
+        borderWidth: 1,
+        borderColor: AppColors.GRAY,
+        paddingHorizontal: 45,
+        paddingVertical: 13,
     }
 })
 
