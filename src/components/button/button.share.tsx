@@ -1,6 +1,6 @@
 import { AppColors } from "@/utils/constant";
 import { ReactNode } from "react";
-import { Pressable, StyleProp, View, ViewStyle, StyleSheet,Text, TextStyle } from "react-native";
+import { Pressable, StyleProp, View, ViewStyle, StyleSheet,Text, TextStyle, TouchableOpacity } from "react-native";
 
 
 interface Iprops {
@@ -12,26 +12,35 @@ interface Iprops {
     btnStyle?: StyleProp<ViewStyle>;
     loading?: boolean;
     iconFlex?: "left" | "right";
+    tpye?: "primary" | "link";
 }
 
 const ShareButton = (props: Iprops) =>{
 
-    const {title, onPress, icon, textStyle, loading, pressStyle, btnStyle, iconFlex = "left"} = props;
+    const {title, onPress, icon, textStyle, loading, pressStyle, btnStyle, iconFlex = "left", tpye = "primary"} = props;
     return(
-        <Pressable
-        disabled = {loading}
-        style = { ({pressed}) => ([{
-            opacity: pressed == true || loading ? 0.5 : 1,
-            alignSelf: "flex-start"
-        },pressStyle])}  
-        onPress = {onPress}  
-    >
-            <View style = {[styles.btnContainer, btnStyle]}>
-                {iconFlex == "left" && icon}
-                <Text style = {[styles.text, textStyle]}>{title}</Text>
-                {iconFlex == "right" && icon}
-            </View>
-        </Pressable>
+        tpye == "primary" ?
+            <Pressable
+            disabled = {loading}
+            style = { ({pressed}) => ([{
+                opacity: pressed == true || loading ? 0.5 : 1,
+                alignSelf: "flex-start"
+            },pressStyle])}  
+            onPress = {onPress}  
+            >
+                <View style = {[styles.btnContainer, btnStyle]}>
+                    {iconFlex == "left" && icon}
+                    <Text style = {[styles.text, textStyle]}>{title}</Text>
+                    {iconFlex == "right" && icon}
+                </View>
+            </Pressable>
+        :
+            <TouchableOpacity
+                onPress={onPress}
+            >
+                <Text style ={[{color : tpye === 'link' ? AppColors.JAZZBERRY_JAM : AppColors.GRAY}, textStyle]}>{title}</Text>
+
+            </TouchableOpacity>
     )
 }
 

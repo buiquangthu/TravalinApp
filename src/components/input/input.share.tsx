@@ -30,8 +30,8 @@ const ShareInput = (props: Iprops) =>{
     const [isSecure, setIsSecure] = useState(secureTextEntry);
 
     return(
-        <View style = {[styles.container, style]}>
-            {value ? <Text style = {{paddingLeft:5}}>{label}</Text> : null}
+        <View style = {[styles.container, value !== "" ?{borderColor: AppColors.JAZZBERRY_JAM} : {},style]}>
+            {value ? <Text style = {{paddingLeft:5, color: AppColors.JAZZBERRY_JAM}}>{label}</Text> : null}
             <View style = {[styles.inputWrapper]}>
                 {!value && icon && icon}
                 <TextInput
@@ -60,7 +60,6 @@ const ShareInput = (props: Iprops) =>{
 const styles = StyleSheet.create({
     container: {
         borderWidth:1,
-        borderColor: AppColors.GRAY,
         borderRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 3,
