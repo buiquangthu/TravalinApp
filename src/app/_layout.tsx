@@ -26,7 +26,7 @@ const Rootlayout = () =>{
             <Stack.Screen name = "(auth)/onboardingScreen" />
             <Stack.Screen name="index"/>
             <Stack.Screen name = "(auth)/signInScreen" />
-
+            <Stack.Screen name= "(auth)/registerScreen" />
         </Stack>
     )
 }

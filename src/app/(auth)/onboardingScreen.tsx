@@ -1,24 +1,26 @@
-import { ImageBackground, Text, View, Image, StyleSheet, Pressable } from "react-native"
+import { ImageBackground, Text, View, Image, StyleSheet, Pressable, ScrollView } from "react-native"
 import ShareButton from "@/components/button/button.share";
 import { router } from "expo-router";
 
 const OnboardingScreen = () =>{
     return(
         <ImageBackground source={require('../../assets/Background.png')} style={styles.container}>
-        <View style = {styles.logo}>
-            <Image source={require('../../assets/Logo.png')}/>
-        </View>
-        <View style = {styles.card}>
-            <Text style = {styles.text}>Ready to explore beyond boundaries?</Text>
+            <ScrollView>
+                <View style = {styles.logo}>
+                    <Image source={require('../../assets/Logo.png')}/>
+                </View>
+                <View style = {styles.card}>
+                    <Text style = {styles.text}>Ready to explore beyond boundaries?</Text>
 
-                <ShareButton 
-                    title="You are ready to explore"
-                    onPress={()=> router.navigate("/(auth)/signInScreen")}
-                    pressStyle = {styles.button}
-                    btnStyle = {{borderRadius: 30, paddingHorizontal: "20%", paddingVertical: 15}}
-                />  
-        </View>
+                    <ShareButton 
+                        title="You are ready to explore"
+                        onPress={()=> router.navigate("/(auth)/signInScreen")}
+                        pressStyle = {styles.button}
+                        btnStyle = {{borderRadius: 30, paddingHorizontal: "20%", paddingVertical: 15}}
+                    />  
+                </View>
 
+            </ScrollView>
         </ImageBackground>
     )
 }

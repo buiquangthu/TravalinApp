@@ -1,24 +1,22 @@
 import ShareInput from "@/components/input/input.share";
 import { AppColors } from "@/utils/constant";
 import React, { useState } from "react";
-import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ShareButton from "@/components/button/button.share";
 import { Facebook, Google } from "@/assets/svgs";
 import TextBetweenLine from "@/components/button/text.between.line";
+import { router } from "expo-router";
 
 const SignInScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
 
     return(
-  
-
         <SafeAreaView style = {styles.container}>
-            <View style = {{}}>
-
-                <View style = {[styles.logo]}>
+            <ScrollView>
+            <View style = {[styles.logo]}>
                     <Image source = {require("../../assets/logoFly.png")}/>
                     <Text style = {[styles.title]}>Let's get you Login!</Text>
                     <Text style = {styles.text}>Enter your information below</Text>
@@ -45,8 +43,6 @@ const SignInScreen = () => {
                 <View style = {styles.textLoginWith}>
                         <TextBetweenLine title="Or login with" textColor="black"/>
                 </View>
-
-            </View>
             <View style = {styles.info}>
                     <ShareInput
                         label="Email Address"
@@ -78,7 +74,7 @@ const SignInScreen = () => {
                         title="Login"
                         onPress={()=>{}}
                         pressStyle ={styles.login}
-                        btnStyle ={{justifyContent: "center", alignItems: "center"}}
+                        btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
                         textStyle = {{paddingVertical: 5}}
                     />
                    
@@ -88,11 +84,15 @@ const SignInScreen = () => {
                     <ShareButton
                         title="Register Now"
                         tpye="link"
-                        onPress={() =>{}}
+                        onPress={() => router.navigate("/(auth)/registerScreen")}
                         textStyle = {{fontSize: 15}}
                     />
                 </View>
 
+
+            </ScrollView>
+
+                
         </SafeAreaView>
 
     )
@@ -130,14 +130,20 @@ const styles = StyleSheet.create({
     },
     loginWith:{
         flexDirection: "row",
-        justifyContent: "space-around"
+        justifyContent: "space-around",
+        // borderWidth: 1,
+        // borderColor: AppColors.GRAY,
+        paddingHorizontal: "5%",
+        gap: 10,
     },
     btnStyle:{
         backgroundColor: AppColors.WHITE,
         borderWidth: 1,
         borderColor: AppColors.GRAY,
-        paddingHorizontal: 45,
+        paddingHorizontal: "10%",
         paddingVertical: 13,
+        
+
     },
     textLoginWith:{
         marginTop: 20,
@@ -160,7 +166,8 @@ const styles = StyleSheet.create({
     register:{
         flexDirection: "row",
         justifyContent: "center",
-        bottom: "5%"
+        // bottom: "5%"
+        
     }
 })
 
