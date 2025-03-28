@@ -41,6 +41,7 @@ const ShareInput = (props: Iprops) =>{
                     onChangeText = {onChangeText}
                     keyboardType = {keyboadType}
                     secureTextEntry = {isSecure}
+                    autoCapitalize="none"
                     style = {[styles.input, {paddingLeft: 5, opacity: value ? 1 : 0.3}, value ? {paddingBottom: 20} : {}]}
                 />
                 {secureTextEntry && value &&(

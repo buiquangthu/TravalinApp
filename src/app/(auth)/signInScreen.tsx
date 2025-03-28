@@ -1,18 +1,39 @@
 import ShareInput from "@/components/input/input.share";
 import { AppColors } from "@/utils/constant";
 import React, { useState } from "react";
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ShareButton from "@/components/button/button.share";
 import { Facebook, Google } from "@/assets/svgs";
 import TextBetweenLine from "@/components/button/text.between.line";
 import { router } from "expo-router";
+import authService from "@/apis/authService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
 
+    const handleLogin = async () => {
+        try {
+          const response = await authService.login({ email, password });
+          console.log('Login successful:', response.data);
+        } catch (error: any) {
+          console.error('Login failed:', error.message);
+          
+          if (error.response) {
+            console.error('Server Response:', error.response.data);
+            Alert.alert('Error', `Server Error: ${error.response.status}`);
+          } else if (error.request) {
+            console.error('No Response from Server');
+            Alert.alert('Error', 'No response from server. Check network.');
+          } else {
+            console.error('Axios Config Error:', error.message);
+            Alert.alert('Error', 'Axios configuration error');
+          }
+        }
+      };
     return(
         <SafeAreaView style = {styles.container}>
             <ScrollView>
@@ -61,21 +82,23 @@ const SignInScreen = () => {
                         icon = {<Ionicons name="lock-closed" size={20} style ={{opacity: 0.3}}/>}
                         style ={{marginRight: "7%"}}
                         secureTextEntry
+
                     />
 
                     <ShareButton 
                         title="Forgot Password?"
-                        onPress={() =>{}}
+                        onPress={() => router.navigate("/(auth)/forgotPasswordScreen")}
                         tpye="link"
+
                         textStyle = {styles.forgotPassword}
                     />
 
                     <ShareButton 
                         title="Login"
-                        onPress={()=>{}}
+                        onPress={handleLogin}
                         pressStyle ={styles.login}
                         btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
-                        textStyle = {{paddingVertical: 5}}
+                        textStyle = {{paddingVertical: 10}}
                     />
                    
                 </View>

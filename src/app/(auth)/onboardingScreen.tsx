@@ -1,8 +1,23 @@
 import { ImageBackground, Text, View, Image, StyleSheet, Pressable, ScrollView } from "react-native"
 import ShareButton from "@/components/button/button.share";
 import { router } from "expo-router";
+import axios from "axios";
+import { useEffect } from "react";
 
 const OnboardingScreen = () =>{
+    // useEffect(() => {
+    //     const ping = async () => {
+    //         try {
+    //             console.log('Pinging the server...');
+    //             const response = await axios.get('http://192.168.1.16:8080/flight_booking/users');
+    //             console.log('Ping response:', response.data);
+    //         } catch (error) {
+    //             console.error('Error pinging the server:', error);
+    //         }
+    //     };
+
+    //     ping();
+    // }, []);
     return(
         <ImageBackground source={require('../../assets/Background.png')} style={styles.container}>
             <ScrollView>
