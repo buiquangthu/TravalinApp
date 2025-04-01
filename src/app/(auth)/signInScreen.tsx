@@ -14,24 +14,46 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const SignInScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
+    const [errors, setErrors] = useState<{email?: string; password?: string}>({});
 
     const handleLogin = async () => {
+        let newErrors:{email?: string; password?: string} = {};
+
+        if(!email) newErrors.email = "Email is required";
+        if(!password) newErrors.password = "Password is required";
+
+        if(Object.keys(newErrors).length > 0){
+            setErrors(newErrors);
+            return;
+        }
         try {
           const response = await authService.login({ email, password });
           console.log('Login successful:', response.data);
-        } catch (error: any) {
-          console.error('Login failed:', error.message);
-          
-          if (error.response) {
-            console.error('Server Response:', error.response.data);
-            Alert.alert('Error', `Server Error: ${error.response.status}`);
-          } else if (error.request) {
-            console.error('No Response from Server');
-            Alert.alert('Error', 'No response from server. Check network.');
-          } else {
-            console.error('Axios Config Error:', error.message);
-            Alert.alert('Error', 'Axios configuration error');
+
+          const token = response.data;
+
+          if(!token){
+            console.log("No token received");
+            return;
           }
+          await AsyncStorage.setItem('token', JSON.stringify(token)); // luu token vao async storage
+
+
+        }catch (error: any) {
+            let apiErrors: { email?: string; password?: string } = {};
+    
+            if (error.response) {
+                // console.error("Server Response:", error.response.data);
+    
+                if (error.response.status === 400) {
+                    // Hiển thị lỗi đăng nhập không đúng
+                    Alert.alert("Invalid email or password");
+                }
+            } else if (error.request) {
+                console.error("No Response from Server");
+                apiErrors.email = "No response from server. Check your network.";
+            }
+            setErrors(apiErrors); // Cập nhật lỗi API vào state
         }
       };
     return(
@@ -69,21 +91,33 @@ const SignInScreen = () => {
                         label="Email Address"
                         placeholder="Enter Email"
                         value={email}
-                        onChangeText={setEmail}
+                        onChangeText={
+                            (text) =>{
+                                setEmail(text);
+                                setErrors({...errors, email: ""})
+                            }
+                        }
                         icon = {<Ionicons name="mail" size={20} style ={{opacity: 0.3}}/>}
                         style ={[{marginRight: "7%"}]}
                     />
+                    {errors.email ? <Text style = {styles.errText}>{errors.email}</Text> : null}
 
                     <ShareInput
                         label="Password"
                         placeholder="Enter Password"
                         value={password}
-                        onChangeText={setPassword}
+                        onChangeText={
+                            (text) =>{
+                                setPassword(text);
+                                setErrors({...errors, password: ""})
+                            }
+                        }
                         icon = {<Ionicons name="lock-closed" size={20} style ={{opacity: 0.3}}/>}
                         style ={{marginRight: "7%"}}
                         secureTextEntry
-
                     />
+                    {errors.password ? <Text style = {styles.errText}>{errors.password}</Text> : null}
+                    {}
 
                     <ShareButton 
                         title="Forgot Password?"
@@ -191,6 +225,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         // bottom: "5%"
         
+    },
+    errText:{
+        color: "red",
+        fontSize: 15,
+        marginLeft: "7%",
+        marginTop: 5
     }
 })
 

@@ -24,6 +24,7 @@ const ForgotPassword = () =>{
             contentContainerStyle = {[styles.container, {flexGrow: 1, padding: 20, paddingTop: "40%"}]}
             enableOnAndroid = {true}
             extraHeight = {20}
+            
 
         >
             <View style ={styles.Box}>
