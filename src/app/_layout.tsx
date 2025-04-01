@@ -37,6 +37,14 @@ const Rootlayout = () =>{
                 title:"",
             }}
             name = "(auth)/forgotPasswordScreen" />
+            <Stack.Screen 
+                options={{headerShown: true, headerShadowVisible: false, title: ""}}
+                name = "(auth)/verifyOtpScreen" />
+            <Stack.Screen options ={{ 
+                headerShown: true,
+                headerShadowVisible: false,
+                title: ""
+            }} name = "(auth)/resetPasswordScreen" />
         </Stack>
     )
 }

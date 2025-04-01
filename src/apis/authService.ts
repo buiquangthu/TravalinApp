@@ -18,6 +18,14 @@ const authService = {
     forgotPassword: async (data:{email: string}) =>{
         const url = '/users/forgot-password';
         return await axiosClient.post(url, data);
+    },
+    verifyOtp: async(data: {email: string, otp: string}) =>{
+        const url = '/users/verify-otp';
+        return await axiosClient.post(url, data);
+    },
+    resetPassword: async(data: {email: string, newPassword: string}) =>{
+        const url = '/users/reset-password';
+        return await axiosClient.post(url, data);
     }
 };
 

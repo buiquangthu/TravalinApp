@@ -1,7 +1,7 @@
 import ShareInput from "@/components/input/input.share";
 import { AppColors } from "@/utils/constant";
-import React, { useState } from "react";
-import { Alert, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ShareButton from "@/components/button/button.share";
@@ -13,33 +13,56 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = () => {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("")
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{email?: string; password?: string}>({});
+    const [registerMessage, setRegisterMessage] = useState("");
 
     const handleLogin = async () => {
         let newErrors:{email?: string; password?: string} = {};
 
+        useEffect(() =>{
+            const checkMessage = async () => {
+                const message = await AsyncStorage.getItem("registerSuccessMessage");
+                console.log("Message:", message);
+                if(message){
+                    setRegisterMessage(message);
+                    await AsyncStorage.removeItem("registerSuccessMessage"); // Xóa message sau khi đã lấy
+                    setTimeout(() => setRegisterMessage(""), 2000); // Xóa message sau 3 giây
+                }
+            };
+            checkMessage();
+        }, []);
+
         if(!email) newErrors.email = "Email is required";
         if(!password) newErrors.password = "Password is required";
+
 
         if(Object.keys(newErrors).length > 0){
             setErrors(newErrors);
             return;
         }
+        setLoading(true);
+        const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1500));
         try {
           const response = await authService.login({ email, password });
           console.log('Login successful:', response.data);
 
-          const token = response.data;
+          const token = response.data.accessToken;
 
           if(!token){
             console.log("No token received");
             return;
           }
-          await AsyncStorage.setItem('token', JSON.stringify(token)); // luu token vao async storage
 
+          await AsyncStorage.setItem('token', token); // luu token vao async storage
 
+          await minLoadingTime;
+          setLoading(false);
+          router.replace("/(tabs)");
         }catch (error: any) {
+            await minLoadingTime;
+            setLoading(false);
             let apiErrors: { email?: string; password?: string } = {};
     
             if (error.response) {
@@ -59,96 +82,106 @@ const SignInScreen = () => {
     return(
         <SafeAreaView style = {styles.container}>
             <ScrollView>
-            <View style = {[styles.logo]}>
-                    <Image source = {require("../../assets/logoFly.png")}/>
-                    <Text style = {[styles.title]}>Let's get you Login!</Text>
-                    <Text style = {styles.text}>Enter your information below</Text>
+                <View>
+                    <View style = {[styles.logo]}>
+                            <Image source = {require("../../assets/logoFly.png")}/>
+                            <Text style = {[styles.title]}>Let's get you Login!</Text>
+                            <Text style = {styles.text}>Enter your information below</Text>
+                        </View>
+                        
+                        <View style = {[styles.loginWith]}>
+                            <ShareButton 
+                                title="Google"
+                                onPress={()=>{}}
+                                btnStyle ={styles.btnStyle}
+                                textStyle = {{color: AppColors.BLACK}}
+                                icon = {<Google/>}
+                            />
+
+                            <ShareButton 
+                                title="Facebook"
+                                onPress={()=>{}}
+                                btnStyle ={styles.btnStyle}
+                                textStyle = {{color: AppColors.BLACK}}
+                                icon = {<Facebook/>}
+                            />
+                        </View>
+
+                        <View style = {styles.textLoginWith}>
+                                <TextBetweenLine title="Or login with" textColor="black"/>
+                        </View>
+                    <View style = {styles.info}>
+                            <ShareInput
+                                label="Email Address"
+                                placeholder="Enter Email"
+                                value={email}
+                                onChangeText={
+                                    (text) =>{
+                                        setEmail(text);
+                                        setErrors({...errors, email: ""})
+                                    }
+                                }
+                                icon = {<Ionicons name="mail" size={20} style ={{opacity: 0.3}}/>}
+                                style ={[{marginRight: "7%"}]}
+                            />
+                            {errors.email ? <Text style = {styles.errText}>{errors.email}</Text> : null}
+
+                            <ShareInput
+                                label="Password"
+                                placeholder="Enter Password"
+                                value={password}
+                                onChangeText={
+                                    (text) =>{
+                                        setPassword(text);
+                                        setErrors({...errors, password: ""})
+                                    }
+                                }
+                                icon = {<Ionicons name="lock-closed" size={20} style ={{opacity: 0.3}}/>}
+                                style ={{marginRight: "7%"}}
+                                secureTextEntry
+                            />
+                            {errors.password ? <Text style = {styles.errText}>{errors.password}</Text> : null}
+                            {}
+
+                            <ShareButton 
+                                title="Forgot Password?"
+                                onPress={() => router.navigate("/(auth)/forgotPasswordScreen")}
+                                tpye="link"
+
+                                textStyle = {styles.forgotPassword}
+                            />
+
+                            <ShareButton 
+                                title="Login"
+                                onPress={handleLogin}
+                                pressStyle ={styles.login}
+                                btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
+                                textStyle = {{paddingVertical: 10}}
+                            />
+                        
+                        </View>
+                        <View style = {styles.register}>
+                            <Text style = {{fontSize: 15}}>Don't have an account? </Text>
+                            <ShareButton
+                                title="Register Now"
+                                tpye="link"
+                                onPress={() => router.navigate("/(auth)/registerScreen")}
+                                textStyle = {{fontSize: 15}}
+                            />
+                        </View>
                 </View>
-                
-                <View style = {[styles.loginWith]}>
-                    <ShareButton 
-                        title="Google"
-                        onPress={()=>{}}
-                        btnStyle ={styles.btnStyle}
-                        textStyle = {{color: AppColors.BLACK}}
-                        icon = {<Google/>}
-                    />
 
-                    <ShareButton 
-                        title="Facebook"
-                        onPress={()=>{}}
-                        btnStyle ={styles.btnStyle}
-                        textStyle = {{color: AppColors.BLACK}}
-                        icon = {<Facebook/>}
-                    />
-                </View>
-
-                <View style = {styles.textLoginWith}>
-                        <TextBetweenLine title="Or login with" textColor="black"/>
-                </View>
-            <View style = {styles.info}>
-                    <ShareInput
-                        label="Email Address"
-                        placeholder="Enter Email"
-                        value={email}
-                        onChangeText={
-                            (text) =>{
-                                setEmail(text);
-                                setErrors({...errors, email: ""})
-                            }
-                        }
-                        icon = {<Ionicons name="mail" size={20} style ={{opacity: 0.3}}/>}
-                        style ={[{marginRight: "7%"}]}
-                    />
-                    {errors.email ? <Text style = {styles.errText}>{errors.email}</Text> : null}
-
-                    <ShareInput
-                        label="Password"
-                        placeholder="Enter Password"
-                        value={password}
-                        onChangeText={
-                            (text) =>{
-                                setPassword(text);
-                                setErrors({...errors, password: ""})
-                            }
-                        }
-                        icon = {<Ionicons name="lock-closed" size={20} style ={{opacity: 0.3}}/>}
-                        style ={{marginRight: "7%"}}
-                        secureTextEntry
-                    />
-                    {errors.password ? <Text style = {styles.errText}>{errors.password}</Text> : null}
-                    {}
-
-                    <ShareButton 
-                        title="Forgot Password?"
-                        onPress={() => router.navigate("/(auth)/forgotPasswordScreen")}
-                        tpye="link"
-
-                        textStyle = {styles.forgotPassword}
-                    />
-
-                    <ShareButton 
-                        title="Login"
-                        onPress={handleLogin}
-                        pressStyle ={styles.login}
-                        btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
-                        textStyle = {{paddingVertical: 10}}
-                    />
-                   
-                </View>
-                <View style = {styles.register}>
-                    <Text style = {{fontSize: 15}}>Don't have an account? </Text>
-                    <ShareButton
-                        title="Register Now"
-                        tpye="link"
-                        onPress={() => router.navigate("/(auth)/registerScreen")}
-                        textStyle = {{fontSize: 15}}
-                    />
-                </View>
-
-
+                    {registerMessage != "" && (
+                        <Text style = {styles.successMessage}>
+                            {registerMessage}
+                        </Text>
+                    )}
             </ScrollView>
-
+            {loading && 
+                <View style = {styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color={AppColors.WHITE}/>
+                </View>    
+            }
                 
         </SafeAreaView>
 
@@ -231,6 +264,18 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginLeft: "7%",
         marginTop: 5
+    },
+    loadingOverlay:{
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    successMessage:{
+        textAlign: "center",
+        color: "green",
+        fontSize: 16,
+        marginTop: 10
     }
 })
 
