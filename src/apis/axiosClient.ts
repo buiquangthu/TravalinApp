@@ -3,7 +3,8 @@ import axios from 'axios';
 
 const axiosClient = axios.create({
     // baseURL: 'http://192.168.1.16:8080/flight_booking',
-    baseURL: 'http://192.168.7.221:8080/flight_booking',
+    // baseURL: 'http://192.168.7.221:8080/flight_booking',
+    baseURL: 'http://192.168.1.38:8080/flight_booking',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -13,13 +14,15 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     async (config) => {
         // neu co token them vao header
-        const token = AsyncStorage.getItem('accessToken');
+        const token = await AsyncStorage.getItem('accessToken');
+        // console.log("Access token:", token); 
         if(token){
             config.headers.Authorization = `Bearer ${token}`;
         }
     return config;
     },
     (error) => {
+        console.log("Request error: ", error);
         return Promise.reject(error);
     }
 );

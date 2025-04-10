@@ -4,5 +4,6 @@ export const AppColors = {
     WHITE: "#FFFFFF",
     DRARK_GRAY: "#336749",
     BLACK: "#000000",
-    JAZZBERRY_JAM:"#800040"
+    JAZZBERRY_JAM:"#800040",
+    LIGHT_GRAY: "#F8F9FA",
 }

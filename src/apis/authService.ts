@@ -26,7 +26,11 @@ const authService = {
     resetPassword: async(data: {email: string, newPassword: string}) =>{
         const url = '/users/reset-password';
         return await axiosClient.post(url, data);
-    }
+    },
+    getProfile: async () => {
+        const url = '/users/my-info';
+        return await axiosClient.get(url);
+    },
 };
 
 export default authService;

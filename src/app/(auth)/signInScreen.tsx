@@ -21,19 +21,6 @@ const SignInScreen = () => {
     const handleLogin = async () => {
         let newErrors:{email?: string; password?: string} = {};
 
-        useEffect(() =>{
-            const checkMessage = async () => {
-                const message = await AsyncStorage.getItem("registerSuccessMessage");
-                console.log("Message:", message);
-                if(message){
-                    setRegisterMessage(message);
-                    await AsyncStorage.removeItem("registerSuccessMessage"); // Xóa message sau khi đã lấy
-                    setTimeout(() => setRegisterMessage(""), 2000); // Xóa message sau 3 giây
-                }
-            };
-            checkMessage();
-        }, []);
-
         if(!email) newErrors.email = "Email is required";
         if(!password) newErrors.password = "Password is required";
 
@@ -55,7 +42,7 @@ const SignInScreen = () => {
             return;
           }
 
-          await AsyncStorage.setItem('token', token); // luu token vao async storage
+          await AsyncStorage.setItem('accessToken', token); // luu token vao async storage
 
           await minLoadingTime;
           setLoading(false);
@@ -68,7 +55,7 @@ const SignInScreen = () => {
             if (error.response) {
                 // console.error("Server Response:", error.response.data);
     
-                if (error.response.status === 400) {
+                if (error.response.status === 403) {
                     // Hiển thị lỗi đăng nhập không đúng
                     Alert.alert("Invalid email or password");
                 }
