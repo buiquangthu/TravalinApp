@@ -26,16 +26,18 @@ const flightService = {
             throw error;
         }
     },
-
-    searchFlights: async (params: { origin?: string; destination?: string; date?: string }) => {
+    // flightService.ts
+    searchFlights: async (params: { originAirportCode?: string; destinationAirportCode?: string; date?: string }) => {
         try {
-            const response = await axiosClient.get("/flights", { params });
-            return response.data;
+        const response = await axiosClient.post("/flights/search", params);
+        return response.data;
         } catch (error) {
-            console.error("Error searching flights:", error);
-            throw error;
+        console.error("Error searching flights:", error);
+        throw error;
         }
-    },
+    }
+  
+    
 }
 
 export default flightService;

@@ -5,12 +5,16 @@ import { AppColors } from "@/utils/constant";
 import flightService from "@/apis/flightService";
 import authService from "@/apis/authService";
 import ImageSlider from "@/components/imageSlider/ImageSlider";
+import ShareFlightCard from "@/components/flight/flightCard";
 
 interface Flight {
     flightId: number;
     flightNumber: string;
     airlineName: string;
+    airlineCode: string;
+    originAirportCode: string;
     originAirportName: string;
+    destinationAirportCode: string;
     destinationAirportName: string;
     departureDatetime: string;
     arrivalDatetime: string;
@@ -56,15 +60,31 @@ const HomeTab = () => {
 
 
  
-  const renderFlight = ({ item }: { item: Flight }) => (
-    <View style={styles.card}>
-      <Text style={styles.flightNumber}>{item.flightNumber} - {item.airlineName}</Text>
-      <Text>{item.originAirportName} → {item.destinationAirportName}</Text>
-      <Text>Khởi hành: {new Date(item.departureDatetime).toLocaleString()}</Text>
-      <Text>Đến: {new Date(item.arrivalDatetime).toLocaleString()}</Text>
-      <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
-    </View>
-  );
+  const renderFlight = (item: Flight) => {
+    const departureDate = new Date(item.departureDatetime);
+    const arrivalDate = new Date(item.arrivalDatetime);
+
+    const formatTime = (date: Date) => {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    return(
+        <ShareFlightCard
+            key={item.flightId}
+            airlineName={item.airlineName}
+            airlineCode={item.airlineCode}
+            originCode={item.originAirportCode}
+            destinationCode={item.destinationAirportCode}
+            departureTime={formatTime(departureDate)}
+            arrivalTime={formatTime(arrivalDate)}
+            duration={Math.floor((arrivalDate.getTime() - departureDate.getTime()) / 60000)} // Tính thời gian bay bằng phút
+            price={item.price}
+            onPress={() =>{
+                console.log("Chi tiet chuyen bay: ", item.flightId);
+            }}
+        />
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -81,11 +101,7 @@ const HomeTab = () => {
             
             <ActivityIndicator size="large" color={AppColors.JAZZBERRY_JAM} />
         ) : (
-            <FlatList
-            data={flights}
-            renderItem={renderFlight}
-            keyExtractor={(item) => item.flightId.toString()}
-            />
+            flights.map(renderFlight)
       )}
 
         </ScrollView>

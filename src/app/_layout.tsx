@@ -45,6 +45,22 @@ const Rootlayout = () =>{
                 headerShadowVisible: false,
                 title: ""
             }} name = "(auth)/resetPasswordScreen" />
+
+            {/* Main Tabs Layout */}
+            <Stack.Screen name="(tabs)" />
+
+            {/* Màn search result (không thuộc tab) */}
+            <Stack.Screen
+            name="searchResultScreen"
+            options={{ headerShown: false, title: "Kết quả tìm kiếm" }}/>
+
+            <Stack.Screen
+            name="customerInfoScreen"
+            options={{headerShown: false}}/>
+
+            <Stack.Screen
+            name="paymentScreen"
+            options={{headerShown: false}}/>
         </Stack>
     )
 }
