@@ -6,6 +6,7 @@ import flightService from "@/apis/flightService";
 import authService from "@/apis/authService";
 import ImageSlider from "@/components/imageSlider/ImageSlider";
 import ShareFlightCard from "@/components/flight/flightCard";
+import FlightDetailModal from "@/components/input/flightDetailModal";
 
 interface Flight {
     flightId: number;
@@ -26,9 +27,11 @@ interface Flight {
 
 const HomeTab = () => {
     const router = useRouter();
-    const [fullname, setFullname] = useState("Tim");
-    const [flights, setFlights] = useState([]);
+    const [fullname, setFullname] = useState("Bạn");
+    const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState(false);
+    const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
+    const passengerCount = 1;
 
     useEffect(() =>{
         const fetchFlights = async () => {
@@ -57,6 +60,10 @@ const HomeTab = () => {
         fetchUser();
     }, []);
 
+    const formatTime = (isoString: string) => {
+        const date = new Date(isoString);
+        return date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+      };
 
 
  
@@ -79,9 +86,7 @@ const HomeTab = () => {
             arrivalTime={formatTime(arrivalDate)}
             duration={Math.floor((arrivalDate.getTime() - departureDate.getTime()) / 60000)} // Tính thời gian bay bằng phút
             price={item.price}
-            onPress={() =>{
-                console.log("Chi tiet chuyen bay: ", item.flightId);
-            }}
+            onPress={() => setSelectedFlight(item)}
         />
     )
   }
@@ -103,9 +108,16 @@ const HomeTab = () => {
         ) : (
             flights.map(renderFlight)
       )}
-
         </ScrollView>
-      
+
+
+        <FlightDetailModal
+        visible={!!selectedFlight}
+        flight={selectedFlight}
+        passengers={passengerCount}
+        onClose={() => setSelectedFlight(null)}
+      />
+
     </View>
   );
 };

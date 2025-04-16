@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -15,18 +15,42 @@ import { Ionicons } from "@expo/vector-icons";
 interface PassengerFormProps {
   index: number;
   label: string;
-  // onChange: (field: string, value: any) => void;
+  onChange: (index: number, data: any) => void;
 }
-/*  */
-const PassengerForm = ({ index, label }: PassengerFormProps) => {
+
+const PassengerForm = ({ index, label, onChange }: PassengerFormProps) => {
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [dob, setDob] = useState<Date | null>(null);
+  const [gender, setGender] = useState<string>("Nam");
   const [nationality, setNationality] = useState<string>("");
   const [passportNumber, setPassportNumber] = useState<string>("");
   const [issuingCountry, setIssuingCountry] = useState<string>("");
-  const [passportExpiry, setPassportExpiry] = useState<Date | null>(null);/*  */
-
-  const [dob, setDob] = useState<Date | null>(null);
-  const [gender, setGender] = useState<string>("Nam");
+  const [passportExpiry, setPassportExpiry] = useState<Date | null>(null);
   const [expanded, setExpanded] = useState(true);
+
+  // Truyền dữ liệu về parent component mỗi khi form thay đổi
+  useEffect(() => {
+    onChange(index, {
+      firstName,
+      lastName,
+      dob,
+      gender,
+      nationality,
+      passportNumber,
+      issuingCountry,
+      passportExpiry,
+    });
+  }, [
+    firstName,
+    lastName,
+    dob,
+    gender,
+    nationality,
+    passportNumber,
+    issuingCountry,
+    passportExpiry,
+  ]);
 
   return (
     <View style={styles.container}>
@@ -43,8 +67,18 @@ const PassengerForm = ({ index, label }: PassengerFormProps) => {
 
       {expanded && (
         <>
-          <TextInput style={styles.input} placeholder="Họ" />
-          <TextInput style={styles.input} placeholder="Tên đệm và tên" />
+          <TextInput
+            style={styles.input}
+            placeholder="Họ"
+            value={lastName}
+            onChangeText={setLastName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Tên đệm và tên"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
           <DateInput label="Ngày sinh" value={dob} onChange={setDob} />
 
           <Text style={styles.label}>Giới tính</Text>
@@ -79,7 +113,9 @@ const PassengerForm = ({ index, label }: PassengerFormProps) => {
             label="Quốc tịch"
             value={nationality}
             onChange={setNationality}
-            options={["Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"]}
+            options={[
+              "Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"
+            ]}
           />
 
           {nationality !== "Việt Nam" && (
@@ -94,8 +130,10 @@ const PassengerForm = ({ index, label }: PassengerFormProps) => {
                 label="Quốc gia cấp"
                 value={issuingCountry}
                 onChange={setIssuingCountry}
-                options={["Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"]}
-                />
+                options={[
+                  "Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"
+                ]}
+              />
               <DateInput
                 label="Ngày hết hạn"
                 value={passportExpiry}

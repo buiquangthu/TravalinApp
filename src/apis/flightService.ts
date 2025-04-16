@@ -35,7 +35,8 @@ const flightService = {
         console.error("Error searching flights:", error);
         throw error;
         }
-    }
+    },
+
   
     
 }

@@ -102,6 +102,7 @@ const SignInScreen = () => {
                                 label="Email Address"
                                 placeholder="Enter Email"
                                 value={email}
+                                keyboadType="email-address"
                                 onChangeText={
                                     (text) =>{
                                         setEmail(text);

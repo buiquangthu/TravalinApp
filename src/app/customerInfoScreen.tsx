@@ -19,17 +19,56 @@ const CustomerInfoScreen = () => {
   const pricePerPassenger = Number(price) || 0;
   const totalPrice = numPassengers * pricePerPassenger;
 
+  const [passengerData, setPassengerData] = useState(
+    Array(numPassengers).fill({
+      firstName: "",
+      lastName: "",
+      dob: null,
+      gender: "Nam",
+      nationality: "",
+      passportNumber: "",
+      issuingCountry: "",
+      passportExpiry: null,
+    })
+  );
+
+  const handlePassengerChange = (index: number, data: any) => {
+    const updated = [...passengerData];
+    updated[index] = data;
+    setPassengerData(updated);
+  };
+
   const [contactName, setContactName] = useState("");
   const [contactLastName, setContactLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
 
+  const handleContinue = () => {
+    //có thể thêm validate ở đây nếu cần
+    router.push({
+      pathname: "/paymentScreen",
+      params: {
+        price: totalPrice,
+        passengers: JSON.stringify(passengerData), // gửi mảng thông tin hành khách
+        contactName,
+        contactLastName,
+        phone,
+        email,
+      },
+    });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.sectionTitle}>Thông tin hành khách</Text>
 
-      {[...Array(numPassengers)].map((_, index) => (
-        <PassengerForm key={index} index={index} label="Hành khách" />
+      {passengerData.map((_, index) => (
+        <PassengerForm
+          key={index}
+          index={index}
+          label={`Hành khách ${index + 1}`}
+          onChange={handlePassengerChange}
+        />
       ))}
 
       <Text style={styles.sectionTitle}>Thông tin liên hệ</Text>
@@ -66,21 +105,7 @@ const CustomerInfoScreen = () => {
         <Text style={styles.totalPrice}>{totalPrice.toLocaleString("vi-VN")} ₫</Text>
       </View>
 
-      <Pressable style={styles.continueButton}
-        onPress={() => {
-          router.push({
-            pathname: "/paymentScreen",
-            params: {
-              price: totalPrice,
-              passengers: passengers,
-              contactName: contactName,
-              contactLastName: contactLastName,
-              phone: phone,
-              email: email,
-            },
-          });
-        }}
-      >
+      <Pressable style={styles.continueButton} onPress={handleContinue}>
         <Text style={styles.continueText}>Tiếp tục</Text>
       </Pressable>
     </ScrollView>
