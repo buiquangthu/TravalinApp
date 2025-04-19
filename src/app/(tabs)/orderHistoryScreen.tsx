@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { AppColors } from "@/utils/constant";
 import ticketService from "@/apis/tickerService";
 import ScreenContainer from "@/components/layout/screenContainer";
- // bạn thay bằng API thật nếu có
+ 
 
 const MyTicketsScreen = () => {
   const router = useRouter();
@@ -21,7 +21,8 @@ const MyTicketsScreen = () => {
     const fetchTickets = async () => {
       try {
         const res = await ticketService.getMyTickets();
-        setTickets(res.data); // data là mảng vé
+        console.log("Vé của tôi:", res);
+        setTickets(res || []);
       } catch (err) {
         console.error("Lỗi lấy vé:", err);
       }
@@ -31,6 +32,7 @@ const MyTicketsScreen = () => {
   }, []);
 
   const groupByMonthYear = (tickets: any[]) => {
+    if (!Array.isArray(tickets)) return {}; // tránh lỗi nếu undefined
     return tickets.reduce((acc, ticket) => {
       const date = new Date(ticket.date);
       const key = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
@@ -42,17 +44,17 @@ const MyTicketsScreen = () => {
 
   const getStatus = (status: string) => {
     switch (status) {
-      case "success":
+      case "Confirmed":
         return { label: "Xuất vé thành công", color: "#4CAF50" };
-      case "holding":
+      case "Pending":
         return { label: "Đang giữ chỗ", color: "#FFC107" };
-      case "failed":
+      case "Cancelled":
         return { label: "Xuất vé thất bại", color: "#F44336" };
       default:
         return { label: "Không rõ", color: "#ccc" };
     }
   };
-
+  
   const grouped = groupByMonthYear(tickets);
 
   return (
@@ -95,8 +97,8 @@ const MyTicketsScreen = () => {
                     {statusInfo.label}
                   </Text>
                   <Text style={styles.route}>
-                    {ticket.from} → {ticket.to}
-                  </Text>
+                        {ticket.flight?.from} → {ticket.flight?.to}
+                    </Text>
                   <Text style={styles.code}>Mã đơn hàng: {ticket.code}</Text>
                   <Text style={styles.price}>
                     {ticket.price.toLocaleString("vi-VN")} ₫

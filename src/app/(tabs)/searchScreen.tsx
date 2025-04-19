@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View, Image, Alert } from "react-native"
 import { MaterialIcons } from "@expo/vector-icons";
 import AirportSelectorModal from "@/components/input/selectorModal";
-import airportService from "@/apis/airportService";
+import airportService from "@/apis/airportService"
+import PassegerInput from "@/components/modal/passegerInput";
 
 interface Airport{
     code: string;
@@ -27,6 +28,7 @@ const SearchScreen = () => {
     const [isRoundTrip, setIsRoundTrip] = useState(false);
     const [passengers, setPassengers] = useState("");
     const [seatClass, setSeatClass] = useState("Economy");
+    const [isShowPassengerModal, setIsShowPassengerModal] = useState(false);
 
 
     const [showOriginModal, setShowOriginModal] = useState(false);
@@ -163,12 +165,21 @@ const SearchScreen = () => {
           )}
     
           <View style = {styles.row}>
-          <DropdownInput
+            {isShowPassengerModal && (
+            <PassegerInput handleClose={() => setIsShowPassengerModal(false)} />
+          )}
+          <Pressable onPress={() => setIsShowPassengerModal(true)}>
+            <ShareText
+              text="Hành khách"
+              icon={<MaterialIcons name="people" size={18} color="#999" />}
+            />
+          </Pressable>
+          {/* <DropdownInput
             label="Hành khách"
             value={passengers}
             onChange={setPassengers}
             options={["1 hành khách", "2 hành khách", "3 hành khách", "4 hành khách"]}
-          />
+          /> */}
 
           <DropdownInput
             label="Hạng ghế"

@@ -14,6 +14,9 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppColors } from "@/utils/constant";
 import ShareInput from "@/components/input/input.share"; // nếu dùng
 import ScreenContainer from "@/components/layout/screenContainer";
+import {bookingService, confirmBooking} from "@/apis/bookingService";
+import { confirmPayment } from "@stripe/stripe-react-native";
+import { useStripe } from '@stripe/stripe-react-native';
 
 const PaymentScreen = () => {
   const router = useRouter();
@@ -24,14 +27,16 @@ const PaymentScreen = () => {
     contactLastName,
     phone,
     email,
+    flightId,
   } = useLocalSearchParams();
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const passengerList = passengers ? JSON.parse(passengers as string) : [];
 
   const [paymentMethod, setPaymentMethod] = useState("Momo");
   const [voucherCode, setVoucherCode] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
-
+  
   const total = Number(price);
 
   const handleConfirm = () => {
@@ -40,10 +45,44 @@ const PaymentScreen = () => {
       return;
     }
 
-    // TODO: Gọi API thanh toán tại đây
+
     Alert.alert("Thanh toán thành công", `Vé đã được gửi đến ${email}`);
     router.replace("/");
   };
+
+  const handleCreateBooking = async () => {
+    try {
+      const response = await bookingService.bookTicket({
+        flightId: Number(flightId),
+        passengers: passengerList,
+        contact: {
+          fullName: contactName + " " + contactLastName,
+          phone:  String(phone),
+          email: String(email),
+        }
+      });
+      const { error: initPaymentError } = await initPaymentSheet({
+        merchantDisplayName: 'Example, Inc.',
+        paymentIntentClientSecret: response.clientSecret,
+      });
+      const bookingId = response.bookingId;
+      const paymentIntentId = response.paymentIntentId;
+      
+      const { error: presentPaymentError } = await presentPaymentSheet();
+      if (initPaymentError || presentPaymentError) {
+        Alert.alert('Thanh toán thất bại')
+      } else {
+
+          Alert.alert("Thông báo", "Đặt vé thành công");
+          confirmBooking(bookingId, paymentIntentId);
+          router.replace("/(tabs)/orderHistoryScreen");
+        }
+      }
+    catch (error) {
+      console.error("Lỗi đặt vé:", error);
+      Alert.alert("Thông báo", "Đặt vé thất bại. Vui lòng thử lại.");
+    }
+  }
 
   return (
     <ScreenContainer title="Xác nhận thanh toán">
@@ -51,7 +90,7 @@ const PaymentScreen = () => {
 
       {/* Phương thức thanh toán */}
       <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
-      {["Momo", "ZaloPay", "Thẻ tín dụng", "Chuyển khoản"].map((method) => (
+      {["Thẻ tín dụng"].map((method) => (
         <Pressable
           key={method}
           style={[
@@ -112,7 +151,7 @@ const PaymentScreen = () => {
       </Text>
 
       {/* Nút xác nhận */}
-      <Pressable style={styles.confirmButton} onPress={handleConfirm}>
+      <Pressable style={styles.confirmButton} onPress={handleCreateBooking}>
         <Text style={styles.confirmText}>Xác nhận thanh toán</Text>
       </Pressable>
     </ScrollView>

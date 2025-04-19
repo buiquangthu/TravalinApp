@@ -3,7 +3,7 @@ import axiosClient from "./axiosClient";
 const ticketService = {
     getMyTickets: async () => {
         try{
-            const response = await axiosClient.get('/tickets/my-tickets');
+            const response = await axiosClient.get('/tickets/me');
             return response.data;
         }catch(error){
             console.error('Error fetching flights:', error);

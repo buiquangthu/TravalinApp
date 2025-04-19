@@ -1,6 +1,7 @@
 import { Stack } from "expo-router"
 import { useEffect, useState } from "react";
 import * as SplashScreen from 'expo-splash-screen';
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 
 
@@ -22,6 +23,9 @@ const Rootlayout = () =>{
     
 
     return(
+    <StripeProvider
+        publishableKey={process.env.EXPO_PUBLIC_STRIPE_KEY as string}
+    >
         <Stack screenOptions={{headerShown: false}}>
             <Stack.Screen name = "(auth)/onboardingScreen" />
             <Stack.Screen name="index"/>
@@ -62,6 +66,7 @@ const Rootlayout = () =>{
             name="paymentScreen"
             options={{headerShown: false}}/>
         </Stack>
+    </StripeProvider>
     )
 }
 export default Rootlayout;

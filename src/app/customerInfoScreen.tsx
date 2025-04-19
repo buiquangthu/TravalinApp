@@ -11,10 +11,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { AppColors } from "@/utils/constant";
 import PassengerForm from "@/components/layout/passengerFormProps";
+import ScreenContainer from "@/components/layout/screenContainer";
 
 const CustomerInfoScreen = () => {
   const router = useRouter();
-  const { passengers, price } = useLocalSearchParams();
+  const { passengers, price, flightId} = useLocalSearchParams();
   const numPassengers = Number(passengers) || 1;
   const pricePerPassenger = Number(price) || 0;
   const totalPrice = numPassengers * pricePerPassenger;
@@ -49,18 +50,20 @@ const CustomerInfoScreen = () => {
       pathname: "/paymentScreen",
       params: {
         price: totalPrice,
-        passengers: JSON.stringify(passengerData), // gửi mảng thông tin hành khách
+        passengers: JSON.stringify(passengerData),
         contactName,
         contactLastName,
         phone,
         email,
+        flightId
       },
     });
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.sectionTitle}>Thông tin hành khách</Text>
+    <ScreenContainer title="Thông tin khách hàng">
+      <ScrollView contentContainerStyle={styles.container}>
+      {/* <Text style={styles.sectionTitle}>Thông tin hành khách</Text> */}
 
       {passengerData.map((_, index) => (
         <PassengerForm
@@ -109,6 +112,7 @@ const CustomerInfoScreen = () => {
         <Text style={styles.continueText}>Tiếp tục</Text>
       </Pressable>
     </ScrollView>
+    </ScreenContainer>
   );
 };
 

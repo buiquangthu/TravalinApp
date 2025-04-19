@@ -99,7 +99,7 @@ const HomeTab = () => {
          <Text style={styles.searchText}>🔍 Tìm chuyến bay...</Text>
         </Pressable>
       
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor: "#f5f5fa", paddingHorizontal: 20}}>
             <ImageSlider/>
             <Text style={styles.subHeader}>Thông tin chuyến bay</Text>
             {loading ? (
@@ -125,16 +125,19 @@ const HomeTab = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-        padding: 20,
+        backgroundColor: AppColors.LIGHT_BLUE,
+        // padding: 20,
     },
     header: {
         fontSize: 24,
         fontWeight: "bold",
+        paddingHorizontal: 20,
+        paddingTop: 20,
     },
     subHeader: {
         fontSize: 18,
         color: "gray",
+        paddingBottom: 20,
     },
     sectionTitle: {
         fontSize: 20,
@@ -209,6 +212,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         backgroundColor: "#f0f0f0",
         marginBottom: 16,
+        marginHorizontal: 20,
       },
       searchText: {
         color: "#666",
