@@ -55,10 +55,13 @@ const SearchResultScreen = () => {
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
   const scaleAnimations = useMemo(() => Array.from({ length: 30 }, () => new Animated.Value(1)), []);
 
-  const passengerCount = useMemo(() => {
-    const match = (passengers as string)?.match(/\d+/);
-    return match ? parseInt(match[0], 10) : 1;
-  }, [passengers]);
+  const passengerObj = passengers ? JSON.parse(passengers as string) : { adult: 1, child: 0, baby: 0 };
+  const passengerCount = passengerObj.adult + passengerObj.child + passengerObj.baby;
+
+  // const passengerCount = useMemo(() => {
+  //   const match = (passengers as string)?.match(/\d+/);
+  //   return match ? parseInt(match[0], 10) : 1;
+  // }, [passengers]);
 
   const dates = useMemo(() => {
     const result = [];
@@ -188,12 +191,16 @@ const SearchResultScreen = () => {
         contentContainerStyle={{ paddingBottom: 30 }}
       />
 
-      <FlightDetailModal
-        visible={!!selectedFlight}
-        flight={selectedFlight}
-        passengers={passengerCount}
-        onClose={() => setSelectedFlight(null)}
-      />
+    <FlightDetailModal
+      visible={!!selectedFlight}
+      flight={selectedFlight}
+      passengers={{
+        adult: passengerObj.adult,
+        child: passengerObj.child,
+        baby: passengerObj.baby
+      }}
+      onClose={() => setSelectedFlight(null)}
+    />
     </View>
   );
 };

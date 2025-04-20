@@ -15,23 +15,55 @@ import ScreenContainer from "@/components/layout/screenContainer";
 
 const CustomerInfoScreen = () => {
   const router = useRouter();
-  const { passengers, price, flightId} = useLocalSearchParams();
-  const numPassengers = Number(passengers) || 1;
+  const { passengers, price, flightId, totalPrice} = useLocalSearchParams();
+  // const numPassengers = Number(passengers) || 1;
   const pricePerPassenger = Number(price) || 0;
-  const totalPrice = numPassengers * pricePerPassenger;
+  // const totalPrice = numPassengers * pricePerPassenger;
+  const parsedPassengers = passengers ? JSON.parse(passengers as string) : { adult: 1, child: 0, baby: 0 };
 
-  const [passengerData, setPassengerData] = useState(
-    Array(numPassengers).fill({
-      firstName: "",
-      lastName: "",
-      dob: null,
-      gender: "Nam",
-      nationality: "",
-      passportNumber: "",
-      issuingCountry: "",
-      passportExpiry: null,
-    })
-  );
+  const numPassengers =
+  (parsedPassengers.adult) +
+  (parsedPassengers.child) +
+  (parsedPassengers.baby);
+
+  // const [passengerData, setPassengerData] = useState(
+  //   Array(numPassengers).fill({
+  //     firstName: "",
+  //     lastName: "",
+  //     dob: null,
+  //     gender: "Nam",
+  //     nationality: "",
+  //     passportNumber: "",
+  //     issuingCountry: "",
+  //     passportExpiry: null,
+  //   })
+  // );
+
+  // Parse passengers
+
+const passengerList = [
+  ...Array(parsedPassengers.adult).fill("Người lớn"),
+  ...Array(parsedPassengers.child).fill("Trẻ em"),
+  ...Array(parsedPassengers.baby).fill("Em bé"),
+];
+
+// Khởi tạo state dựa trên số lượng hành khách
+const [passengerData, setPassengerData] = useState(
+  passengerList.map(() => ({
+    firstName: "",
+    lastName: "",
+    dob: null,
+    gender: "Nam",
+    nationality: "",
+    passportNumber: "",
+    issuingCountry: "",
+    passportExpiry: null,
+  }))
+);
+
+
+  const formatCurrency = (num: number) =>
+    num.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ₫";
 
   const handlePassengerChange = (index: number, data: any) => {
     const updated = [...passengerData];
@@ -65,14 +97,24 @@ const CustomerInfoScreen = () => {
       <ScrollView contentContainerStyle={styles.container}>
       {/* <Text style={styles.sectionTitle}>Thông tin hành khách</Text> */}
 
-      {passengerData.map((_, index) => (
+      {/* {passengerData.map((_, index) => (
         <PassengerForm
           key={index}
           index={index}
-          label={`Hành khách ${index + 1}`}
+          label={`Điền thông tin`}
+          onChange={handlePassengerChange}
+        />
+      ))} */}
+
+      {passengerList.map((type, index) => (
+        <PassengerForm
+          key={index}
+          index={index}
+          label={type}
           onChange={handlePassengerChange}
         />
       ))}
+
 
       <Text style={styles.sectionTitle}>Thông tin liên hệ</Text>
 
@@ -105,7 +147,7 @@ const CustomerInfoScreen = () => {
 
       <View style={styles.totalRow}>
         <Text style={styles.totalLabel}>Tổng số tiền</Text>
-        <Text style={styles.totalPrice}>{totalPrice.toLocaleString("vi-VN")} ₫</Text>
+        <Text style={styles.totalPrice}>{formatCurrency(Number(totalPrice))}</Text>
       </View>
 
       <Pressable style={styles.continueButton} onPress={handleContinue}>

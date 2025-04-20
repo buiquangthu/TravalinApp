@@ -7,4 +7,5 @@ export const AppColors = {
     JAZZBERRY_JAM:"#800040",
     LIGHT_GRAY: "#F8F9FA",
     LIGHT_BLUE: "#1a94ff",
+    LIGHT_GREEN: "#D7FAE0",
 }

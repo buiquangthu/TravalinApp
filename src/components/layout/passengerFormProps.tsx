@@ -29,6 +29,9 @@ const PassengerForm = ({ index, label, onChange }: PassengerFormProps) => {
   const [passportExpiry, setPassportExpiry] = useState<Date | null>(null);
   const [expanded, setExpanded] = useState(true);
 
+  const isAdult = label === "Người lớn";
+  const isChild = label === "Trẻ em";
+  const isInfant = label === "Em bé";
   // Truyền dữ liệu về parent component mỗi khi form thay đổi
   useEffect(() => {
     onChange(index, {
@@ -109,16 +112,28 @@ const PassengerForm = ({ index, label, onChange }: PassengerFormProps) => {
             </TouchableOpacity>
           </View>
 
-          <DropdownInput
+          {/* <DropdownInput
             label="Quốc tịch"
             value={nationality}
             onChange={setNationality}
             options={[
               "Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"
             ]}
-          />
+          /> */}
 
-          {nationality !== "Việt Nam" && (
+          {!isInfant && (
+            <DropdownInput
+              label="Quốc tịch"
+              value={nationality}
+              onChange={setNationality}
+              options={[
+                "Việt Nam", "Mỹ", "Anh", "Pháp", "Nhật Bản", "Hàn Quốc", "Trung Quốc", "Đài Loan", "Singapore", "Malaysia", "Thái Lan", "Indonesia", "Philippines", "Úc", "Canada", "New Zealand", "Ấn Độ", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal", "Bhutan", "Maldives"
+              ]}
+            />
+          )}
+
+
+          {nationality !== "Việt Nam" && isAdult && (
             <>
               <TextInput
                 style={styles.input}

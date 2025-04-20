@@ -26,9 +26,10 @@ const SearchScreen = () => {
     const [departureDate, setDepartureDate] = useState<Date | null>(null);
     const [returnDate, setReturnDate] = useState<Date | null>(null);
     const [isRoundTrip, setIsRoundTrip] = useState(false);
-    const [passengers, setPassengers] = useState("");
+    const [passengers, setPassengers] = useState({ adult: 1, child: 0, baby: 0 });
     const [seatClass, setSeatClass] = useState("Economy");
     const [isShowPassengerModal, setIsShowPassengerModal] = useState(false);
+    
 
 
     const [showOriginModal, setShowOriginModal] = useState(false);
@@ -56,7 +57,6 @@ const SearchScreen = () => {
     }, []);
   
     const handleSearch = () => {
-      // Xử lý logic điều hướng sang danh sách chuyến bay
       if(!origin && !destination && !departureDate) {
         Alert.alert("Thông báo", "Bạn chưa điền đủ thông tin.")
         return;
@@ -67,11 +67,10 @@ const SearchScreen = () => {
         params: {
           origin: origin?.code ?? "",
           destination: destination?.code ?? "",
-          departureDate: departureDate ? departureDate.toISOString() : "",
-          returnDate: returnDate ? returnDate.toISOString() : "",
-          passengers, // ví dụ: "2 hành khách"
-          date: departureDate ? departureDate.toISOString().split("T")[0] : "",
+          departureDate: departureDate?.toISOString() ?? "",
+          returnDate: returnDate?.toISOString() ?? "",
           seatClass,
+          passengers: JSON.stringify(passengers),
           isRoundTrip: isRoundTrip.toString()
         },
       });
@@ -166,20 +165,31 @@ const SearchScreen = () => {
     
           <View style = {styles.row}>
             {isShowPassengerModal && (
-            <PassegerInput handleClose={() => setIsShowPassengerModal(false)} />
-          )}
+            <PassegerInput 
+            handleClose={() => setIsShowPassengerModal(false)} 
+            onConfirm={(newPassengers) => {
+              setPassengers(newPassengers);
+              setIsShowPassengerModal(false);
+            }}
+          />          )}
           <Pressable onPress={() => setIsShowPassengerModal(true)}>
-            <ShareText
-              text="Hành khách"
-              icon={<MaterialIcons name="people" size={18} color="#999" />}
-            />
+              <ShareText
+                text={`Hành khách`}
+                icon={<MaterialIcons name="people" size={18} color="#999" />}
+              />
+
           </Pressable>
-          {/* <DropdownInput
-            label="Hành khách"
-            value={passengers}
-            onChange={setPassengers}
-            options={["1 hành khách", "2 hành khách", "3 hành khách", "4 hành khách"]}
-          /> */}
+
+          {isShowPassengerModal && (
+          <PassegerInput
+            handleClose={() => setIsShowPassengerModal(false)}
+            defaultValue={passengers}
+            onConfirm={(newPassegers) => {
+              setPassengers(newPassegers);
+              setIsShowPassengerModal(false);
+            }}
+          />
+)}
 
           <DropdownInput
             label="Hạng ghế"
@@ -196,9 +206,7 @@ const SearchScreen = () => {
             <Text style={styles.searchButtonText}>Tìm chuyến bay</Text>
           </Pressable>
             </View>
-    
-          
-
+  
             </View>
         </ScrollView>
       );

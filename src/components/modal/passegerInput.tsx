@@ -11,15 +11,20 @@ interface Passegers {
 }
 type PassegerType = 'ADULT' | 'CHILD' | 'BABY';
 
-
-const PassegerInput = ({handleClose} : 
-{handleClose: () => void}
-) => {
-    const [passegers, setPassegers] = useState<Passegers>({
-        adult: 0,
-        child: 0,
-        baby: 0
-    })
+const PassegerInput = ({
+    handleClose,
+    defaultValue,
+    onConfirm
+  }: {
+    handleClose: () => void;
+    defaultValue?: Passegers;
+    onConfirm: (passegers: Passegers) => void;
+  }) => {
+    const [passegers, setPassegers] = useState<Passegers>(defaultValue || {
+      adult: 1,
+      child: 0,
+      baby: 0
+    });
 
     const handlePassagerChange = (newCount: number, passgerType: PassegerType) => {
         switch (passgerType) {
@@ -46,8 +51,7 @@ const PassegerInput = ({handleClose} :
             <View style={{ backgroundColor: "#fff", borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
                 <View style={{ alignItems: 'center', paddingVertical: 15, position: 'relative', justifyContent:'center'}}>
                     <Text style={styles.title}>Chọn hành khách</Text>
-                    <TouchableOpacity onPress={() => {}} style={{position: 'absolute', alignSelf: 'flex-end', right: 20}}>
-                        {/* <Text style = {styles.close}>X</Text> */}
+                    <TouchableOpacity onPress={handleClose} style={{position: 'absolute', alignSelf: 'flex-end', right: 20}}>
                         <Close/>
                     </TouchableOpacity>
                 </View>
@@ -77,8 +81,11 @@ const PassegerInput = ({handleClose} :
                     setPasseger={handlePassagerChange}
                 />
                 </View>
-                <TouchableOpacity style={{paddingTop: 15, paddingBottom: 10}} onPress={handleClose}>
-                <Text style={styles.button}>Xác nhận</Text>
+                <TouchableOpacity style={{paddingTop: 15}} onPress={() => {
+                    onConfirm(passegers);
+                    handleClose();
+                    }}>
+                    <Text style={styles.button}>Xác nhận</Text>
                 </TouchableOpacity>
             </View>
         </View>

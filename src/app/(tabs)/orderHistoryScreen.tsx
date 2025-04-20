@@ -21,8 +21,11 @@ const MyTicketsScreen = () => {
     const fetchTickets = async () => {
       try {
         const res = await ticketService.getMyTickets();
-        console.log("Vé của tôi:", res);
-        setTickets(res || []);
+        // console.log("Vé của tôi:", res);
+        const sortedTickets = [...(res || [])].sort((a, b) => {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+        setTickets(sortedTickets);
       } catch (err) {
         console.error("Lỗi lấy vé:", err);
       }

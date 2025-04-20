@@ -8,7 +8,8 @@ import {
   Pressable,
   Alert,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppColors } from "@/utils/constant";
@@ -36,21 +37,25 @@ const PaymentScreen = () => {
   const [paymentMethod, setPaymentMethod] = useState("Momo");
   const [voucherCode, setVoucherCode] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const total = Number(price);
 
-  const handleConfirm = () => {
-    if (!agreeTerms) {
-      Alert.alert("Lưu ý", "Bạn cần đồng ý với điều khoản sử dụng.");
-      return;
-    }
+  // const handleConfirm = () => {
+  //   if (!agreeTerms) {
+  //     Alert.alert("Lưu ý", "Bạn cần đồng ý với điều khoản sử dụng.");
+  //     return;
+  //   }
 
 
-    Alert.alert("Thanh toán thành công", `Vé đã được gửi đến ${email}`);
-    router.replace("/");
-  };
+  //   Alert.alert("Thanh toán thành công", `Vé đã được gửi đến ${email}`);
+  //   router.replace("/");
+  // };
 
   const handleCreateBooking = async () => {
+    if (loading) return;
+    setLoading(true);
+
     try {
       const response = await bookingService.bookTicket({
         flightId: Number(flightId),
@@ -61,26 +66,39 @@ const PaymentScreen = () => {
           email: String(email),
         }
       });
+
+      const { clientSecret, bookingId, paymentIntentId } = response;
+      
+      // Khởi tạo payment sheet
       const { error: initPaymentError } = await initPaymentSheet({
-        merchantDisplayName: 'Example, Inc.',
+        merchantDisplayName: 'Hệ thống đặt vé máy bay',
         paymentIntentClientSecret: response.clientSecret,
       });
-      const bookingId = response.bookingId;
-      const paymentIntentId = response.paymentIntentId;
+      if (initPaymentError) {
+        Alert.alert("Lỗi", "Không thể khởi tạo giao diện thanh toán.");
+        return;
+      }
       
       const { error: presentPaymentError } = await presentPaymentSheet();
-      if (initPaymentError || presentPaymentError) {
-        Alert.alert('Thanh toán thất bại')
-      } else {
 
-          Alert.alert("Thông báo", "Đặt vé thành công");
-          confirmBooking(bookingId, paymentIntentId);
-          router.replace("/(tabs)/orderHistoryScreen");
-        }
+      if (presentPaymentError) {
+        Alert.alert("Thanh toán thất bại", "Vui lòng thử lại.");
+        return;
       }
-    catch (error) {
+  
+      // 4. Gửi yêu cầu xác nhận booking sau khi thanh toán thành công
+      try {
+        await confirmBooking(bookingId, paymentIntentId);
+        Alert.alert("Thành công", "Đặt vé thành công. Vé đã được gửi qua email!");
+        router.replace("/(tabs)/orderHistoryScreen");
+      } catch (confirmError) {
+        Alert.alert("Lỗi", "Thanh toán thành công nhưng xác nhận vé thất bại.");
+      }
+    } catch (error) {
       console.error("Lỗi đặt vé:", error);
-      Alert.alert("Thông báo", "Đặt vé thất bại. Vui lòng thử lại.");
+      Alert.alert("Lỗi", "Không thể tạo đơn đặt vé. Vui lòng thử lại.");
+    }finally {
+      setLoading(false); 
     }
   }
 
@@ -151,10 +169,31 @@ const PaymentScreen = () => {
       </Text>
 
       {/* Nút xác nhận */}
-      <Pressable style={styles.confirmButton} onPress={handleCreateBooking}>
-        <Text style={styles.confirmText}>Xác nhận thanh toán</Text>
+      <Pressable
+          disabled={loading || !agreeTerms}
+          style={[styles.confirmButton, loading && { opacity: 0.6 }]}
+          onPress={handleCreateBooking}
+      >
+          <Text style={styles.confirmText}>
+          {loading ? "Đang xử lý..." : "Xác nhận thanh toán"}
+          </Text>
       </Pressable>
     </ScrollView>
+
+    {loading && (
+      <View style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.6)',
+        zIndex: 999
+      }}>
+        <ActivityIndicator size="large" color={AppColors.LIGHT_BLUE} />
+        <Text style={{ marginTop: 8 }}>Đang xử lý thanh toán...</Text>
+      </View>
+    )}
+
     </ScreenContainer>
   );
 };

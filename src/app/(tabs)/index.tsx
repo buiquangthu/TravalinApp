@@ -33,6 +33,12 @@ const HomeTab = () => {
     const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
     const passengerCount = 1;
 
+    const passengerObj = {
+        adult: 1,
+        child: 0,
+        baby: 0,
+    };
+
     useEffect(() =>{
         const fetchFlights = async () => {
             try{
@@ -101,7 +107,7 @@ const HomeTab = () => {
       
         <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor: "#f5f5fa", paddingHorizontal: 20}}>
             <ImageSlider/>
-            <Text style={styles.subHeader}>Thông tin chuyến bay</Text>
+            <Text style={styles.subHeader}>Gợi ý chuyến bay</Text>
             {loading ? (
             
             <ActivityIndicator size="large" color={AppColors.JAZZBERRY_JAM} />
@@ -110,13 +116,16 @@ const HomeTab = () => {
       )}
         </ScrollView>
 
-
         <FlightDetailModal
-        visible={!!selectedFlight}
-        flight={selectedFlight}
-        passengers={passengerCount}
-        onClose={() => setSelectedFlight(null)}
-      />
+            visible={!!selectedFlight}
+            flight={selectedFlight}
+            passengers={{
+                adult: passengerObj.adult,
+                child: passengerObj.child,
+                baby: passengerObj.baby
+            }}
+            onClose={() => setSelectedFlight(null)}
+            />
 
     </View>
   );

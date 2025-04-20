@@ -16,7 +16,12 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   flight: any; // Tùy chỉnh type sau nếu cần
-  passengers: number;
+
+  passengers: {
+    adult: number;
+    child: number;
+    baby: number;
+  };
 }
 
 const FlightDetailModal = ({ visible, onClose, flight, passengers }: Props) => {
@@ -43,8 +48,18 @@ const FlightDetailModal = ({ visible, onClose, flight, passengers }: Props) => {
       return `${day},${dayOfMonth}/${month}/${year}`;
     };
   
-    const totalPrice = flight.price * passengers;
-  
+    const totalPrice =
+    Number(flight?.price) *
+    (
+      Number(passengers?.adult) +
+      Number(passengers?.child) * 0.5 +
+      Number(passengers?.baby) * 0.2
+    );
+
+    const adultPrice = flight?.price * passengers?.adult;
+    const childPrice = flight?.price * passengers?.child * 0.5;
+    const babyPrice = flight?.price * passengers?.baby * 0.2;
+
     return (
       <Modal visible={visible} animationType="slide" transparent>
         <View style={styles.overlay}>
@@ -74,7 +89,6 @@ const FlightDetailModal = ({ visible, onClose, flight, passengers }: Props) => {
             <ScrollView style={styles.content}>
               {activeTab === "flight" ? (
                 <>
-                  {/* Flight Info */}
                   <View style={styles.flightCard}>
                     <View style={styles.bottomRow}>
                       <Image source={getAirlineLogo(flight.airlineCode)} style={styles.logo} />
@@ -107,9 +121,26 @@ const FlightDetailModal = ({ visible, onClose, flight, passengers }: Props) => {
   
                   {/* Giá chi tiết */}
                   <View style={styles.priceRow}>
-                    <Text>Khách hàng ({passengers})</Text>
-                    <Text>{formatCurrency(totalPrice)}</Text>
+                    <Text>
+                      {`Người lớn: SL${passengers.adult}`}
+                    </Text>
+                    <Text>{formatCurrency(adultPrice)}</Text>
                   </View>
+
+                  <View style={styles.priceRow}>
+                    <Text>
+                      {`Trẻ em: SL${passengers.child}`}
+                    </Text>
+                    <Text>{formatCurrency(childPrice)}</Text>
+                  </View>
+
+                  <View style={styles.priceRow}>
+                    <Text>
+                      {`Em bé: SL${passengers.baby}`}
+                    </Text>
+                    <Text>{formatCurrency(babyPrice)}</Text>
+                  </View>
+
                   <View style={styles.priceRow}>
                     <Text>Thuế</Text>
                     <Text>Đã bao gồm</Text>
@@ -151,7 +182,8 @@ const FlightDetailModal = ({ visible, onClose, flight, passengers }: Props) => {
                     params: {
                         flightId: flight.flightId,
                         price: flight.price,
-                        passengers: passengers.toString(),
+                        passengers: JSON.stringify(passengers),
+                        totalPrice: totalPrice,
                     },
                     });
                 }}
