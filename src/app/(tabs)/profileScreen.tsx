@@ -6,6 +6,7 @@ import {
   Pressable,
   Image,
   Alert,
+  Linking,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { AppColors } from "@/utils/constant";
@@ -21,18 +22,18 @@ const ProfileScreen = () => {
   const [email, setEmail] = useState("")
 
   useEffect(() => {
-    
+
     const fetchUser = async () => {
-        try{
-            const response = await authService.getProfile();
-            setFullname(response.data.fullname);
-            setEmail(response.data.email);
-        }catch(error){
-            console.error("Error fetching user profile:", error);
-        }
+      try {
+        const response = await authService.getProfile();
+        setFullname(response.data.fullname);
+        setEmail(response.data.email);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
     };
     fetchUser();
-  },[])
+  }, [])
 
 
   const handleLogout = async () => {
@@ -53,13 +54,13 @@ const ProfileScreen = () => {
       },
     ]);
   };
-  
+
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={{ uri: "https://i.pravatar.cc/100" }}
+          source={{ uri: "https://i.pravatar.cc/101" }}
           style={styles.avatar}
         />
         <View>
@@ -67,43 +68,45 @@ const ProfileScreen = () => {
           <Text style={styles.email}>{email}</Text>
         </View>
       </View>
-      <View style = {styles.styleOption}>
-      <Pressable style={styles.option} onPress={() => {}}>
-        <Ionicons name="create-outline" size={20} style={styles.icon} />
-        <Text style={styles.optionText}>Chỉnh sửa hồ sơ</Text>
-      </Pressable>
+      <View style={styles.styleOption}>
+        <Pressable style={styles.option} onPress={() => { router.push("/changePasswordScreen") }}>
+          <Ionicons name="create-outline" size={20} style={styles.icon} />
+          <Text style={styles.optionText}>Thay đổi mật khẩu</Text>
+        </Pressable>
 
-      <Pressable style={styles.option} onPress={() => {}}>
-        <FontAwesome5 name="ticket-alt" size={18} style={styles.icon} />
-        <Text style={styles.optionText}>Phiếu giảm giá</Text>
-      </Pressable>
+        <Pressable style={styles.option} onPress={() => { }}>
+          <FontAwesome5 name="ticket-alt" size={18} style={styles.icon} />
+          <Text style={styles.optionText}>Phiếu giảm giá</Text>
+        </Pressable>
 
-      <Pressable style={styles.option} onPress={() => {}}>
-        <FontAwesome5 name="credit-card" size={18} style={styles.icon} />
-        <Text style={styles.optionText}>Phương thức thanh toán</Text>
-      </Pressable>
+        <Pressable style={styles.option} onPress={() => { }}>
+          <FontAwesome5 name="credit-card" size={18} style={styles.icon} />
+          <Text style={styles.optionText}>Phương thức thanh toán</Text>
+        </Pressable>
 
-      <Pressable style={styles.option} onPress={() => {}}>
-        <Ionicons name="airplane-outline" size={20} style={styles.icon} />
-        <Text style={styles.optionText}>Vé của tôi</Text>
-      </Pressable>
+        <Pressable style={styles.option} onPress={() => { router.replace("/(tabs)/orderHistoryScreen") }}>
+          <Ionicons name="airplane-outline" size={20} style={styles.icon} />
+          <Text style={styles.optionText}>Vé của tôi</Text>
+        </Pressable>
 
-      <Pressable style={styles.option} onPress={() => {}}>
-        <Ionicons name="lock-closed-outline" size={20} style={styles.icon} />
-        <Text style={styles.optionText}>Chính sách bảo mật</Text>
-      </Pressable>
+        <Pressable style={styles.option}
+          onPress={() => Linking.openURL("https://www.traveloka.com/vi-vn/privacy-notice")}
+        >
+          <Ionicons name="lock-closed-outline" size={20} style={styles.icon} />
+          <Text style={styles.optionText}>Chính sách bảo mật</Text>
+        </Pressable>
 
-      <Pressable style={styles.option} onPress={() => {}}>
-        <MaterialIcons name="description" size={20} style={styles.icon} />
-        <Text style={styles.optionText}>Điều khoản sử dụng</Text>
-      </Pressable>
+        <Pressable style={styles.option} onPress={() => Linking.openURL("https://www.traveloka.com/vi-vn/promotion/hotel-tnc")}>
+          <MaterialIcons name="description" size={20} style={styles.icon} />
+          <Text style={styles.optionText}>Điều khoản sử dụng</Text>
+        </Pressable>
 
-      {/* Logout */}
-      <Pressable style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Đăng xuất</Text>
-      </Pressable>
+        {/* Logout */}
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Đăng xuất</Text>
+        </Pressable>
       </View>
-      
+
     </View>
   );
 };
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-  styleOption:{
+  styleOption: {
     padding: 16,
     backgroundColor: "#fff",
   }

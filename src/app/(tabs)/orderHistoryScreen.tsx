@@ -48,9 +48,9 @@ const MyTicketsScreen = () => {
   const getStatus = (status: string) => {
     switch (status) {
       case "Confirmed":
-        return { label: "Xuất vé thành công", color: "#4CAF50" };
+        return { label: "Thanh toán thành công", color: "#4CAF50" };
       case "Pending":
-        return { label: "Đang giữ chỗ", color: "#FFC107" };
+        return { label: "Chưa thanh toán", color: "#FFC107" };
       case "Cancelled":
         return { label: "Xuất vé thất bại", color: "#F44336" };
       default:
@@ -61,7 +61,9 @@ const MyTicketsScreen = () => {
   const grouped = groupByMonthYear(tickets);
 
   return (
-    <ScreenContainer title="Vé của tôi">
+    <ScreenContainer title="Vé của tôi"
+    showBack = {false}
+    >
         <ScrollView style={styles.container}>
       {tickets.length === 0 ? (
         <View style={styles.emptyContainer}>

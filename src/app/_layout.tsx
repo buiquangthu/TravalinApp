@@ -65,6 +65,10 @@ const Rootlayout = () =>{
             <Stack.Screen
             name="paymentScreen"
             options={{headerShown: false}}/>
+
+            <Stack.Screen
+            name="changePasswordScreen"
+            options={{headerShown: false}}/>
         </Stack>
     </StripeProvider>
     )

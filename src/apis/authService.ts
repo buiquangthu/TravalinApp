@@ -31,6 +31,10 @@ const authService = {
         const url = '/users/my-info';
         return await axiosClient.get(url);
     },
+    changePassword: async (data:{currentPassword: string, newPassword: string}) =>{
+        const url = '/users/change-password';
+        return await axiosClient.post(url, data);
+    }
 };
 
 export default authService;
