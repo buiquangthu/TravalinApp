@@ -1,8 +1,10 @@
 import { ImageBackground, Text, View, Image, StyleSheet, Pressable, ScrollView } from "react-native"
 import ShareButton from "@/components/button/button.share";
 import { router } from "expo-router";
+import AntDesign from '@expo/vector-icons/AntDesign';
 import axios from "axios";
 import { useEffect } from "react";
+import { AppColors } from "@/utils/constant";
 
 const OnboardingScreen = () =>{
     // useEffect(() => {
@@ -25,10 +27,12 @@ const OnboardingScreen = () =>{
                     <Image source={require('../../assets/Logo.png')}/>
                 </View>
                 <View style = {styles.card}>
-                    <Text style = {styles.text}>Ready to explore beyond boundaries?</Text>
+                    <Text style = {styles.text}>Sẵn sàng khám phá vượt qua ranh giới?</Text>
 
                     <ShareButton 
-                        title="You are ready to explore"
+                        title="Tiếp tục"
+                        icon = {<AntDesign name="arrowright" size={24} color= {AppColors.WHITE} />}
+                        iconFlex="right"
                         onPress={()=> router.navigate("/(auth)/signInScreen")}
                         pressStyle = {styles.button}
                         btnStyle = {{borderRadius: 30, paddingHorizontal: "20%", paddingVertical: 15}}

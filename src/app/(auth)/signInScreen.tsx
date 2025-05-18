@@ -15,14 +15,17 @@ const SignInScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState<{email?: string; password?: string}>({});
+    const [errors, setErrors] = useState<{email?: string; password?: string; notExits?:string}>({});
     const [registerMessage, setRegisterMessage] = useState("");
+    const [errorslogin, setErrorslogin] = useState("");
+    
 
     const handleLogin = async () => {
-        let newErrors:{email?: string; password?: string} = {};
+        let newErrors:{email?: string; password?: string, notExits?:string} = {};
+        setErrorslogin("");
 
-        if(!email) newErrors.email = "Email is required";
-        if(!password) newErrors.password = "Password is required";
+        if(!email) newErrors.email = "Vui lòng nhập email";
+        if(!password) newErrors.password = "Vui lòng nhập mật khẩu";
 
 
         if(Object.keys(newErrors).length > 0){
@@ -52,18 +55,16 @@ const SignInScreen = () => {
             setLoading(false);
             let apiErrors: { email?: string; password?: string } = {};
     
-            if (error.response) {
-                // console.error("Server Response:", error.response.data);
-    
-                if (error.response.status === 403) {
-                    // Hiển thị lỗi đăng nhập không đúng
-                    Alert.alert("Invalid email or password");
-                }
-            } else if (error.request) {
-                console.error("No Response from Server");
-                apiErrors.email = "No response from server. Check your network.";
-            }
-            setErrors(apiErrors); // Cập nhật lỗi API vào state
+            const errorData = error?.response?.data;
+
+            if (errorData?.errorCode === "VALIDATION_ERROR") {
+                apiErrors.email =  "Email không hợp lệ";
+              } else if (error?.response?.status === 403 || error?.response?.status === 404) {
+                setErrorslogin("Tài khoản hoặc mật khẩu không chính xác");
+              } else if (error.request) {
+                apiErrors.email = "Không kết nối được với máy chủ";
+              }
+            setErrors(apiErrors);
         }
       };
     return(
@@ -72,8 +73,8 @@ const SignInScreen = () => {
                 <View>
                     <View style = {[styles.logo]}>
                             <Image source = {require("../../assets/logoFly.png")}/>
-                            <Text style = {[styles.title]}>Let's get you Login!</Text>
-                            <Text style = {styles.text}>Enter your information below</Text>
+                            <Text style = {[styles.title]}>Hãy cùng đăng nhập nhé!</Text>
+                            <Text style = {styles.text}>Nhập thông tin của bạn bên dưới</Text>
                         </View>
                         
                         <View style = {[styles.loginWith]}>
@@ -100,8 +101,9 @@ const SignInScreen = () => {
                     <View style = {styles.info}>
                             <ShareInput
                                 label="Email Address"
-                                placeholder="Enter Email"
+                                placeholder="Nhập email của bạn"
                                 value={email}
+                                
                                 keyboadType="email-address"
                                 onChangeText={
                                     (text) =>{
@@ -116,7 +118,7 @@ const SignInScreen = () => {
 
                             <ShareInput
                                 label="Password"
-                                placeholder="Enter Password"
+                                placeholder="Nhập mật khẩu của bạn"
                                 value={password}
                                 onChangeText={
                                     (text) =>{
@@ -129,18 +131,17 @@ const SignInScreen = () => {
                                 secureTextEntry
                             />
                             {errors.password ? <Text style = {styles.errText}>{errors.password}</Text> : null}
-                            {}
-
+                            { errorslogin ? <Text style = {styles.errTextLogin}>{errorslogin}</Text> : null}
                             <ShareButton 
-                                title="Forgot Password?"
+                                title="Quên mật khẩu?"
                                 onPress={() => router.navigate("/(auth)/forgotPasswordScreen")}
                                 tpye="link"
 
                                 textStyle = {styles.forgotPassword}
                             />
-
+                           
                             <ShareButton 
-                                title="Login"
+                                title="Đăng nhập"
                                 onPress={handleLogin}
                                 pressStyle ={styles.login}
                                 btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
@@ -149,9 +150,9 @@ const SignInScreen = () => {
                         
                         </View>
                         <View style = {styles.register}>
-                            <Text style = {{fontSize: 15}}>Don't have an account? </Text>
+                            <Text style = {{fontSize: 15}}>Bạn chưa có tài khoản?  </Text>
                             <ShareButton
-                                title="Register Now"
+                                title="Đăng ký"
                                 tpye="link"
                                 onPress={() => router.navigate("/(auth)/registerScreen")}
                                 textStyle = {{fontSize: 15}}
@@ -251,7 +252,15 @@ const styles = StyleSheet.create({
         color: "red",
         fontSize: 15,
         marginLeft: "7%",
-        marginTop: 5
+        marginTop: 5,
+    },
+    errTextLogin:{
+        color: "red",
+        fontSize: 15,
+        marginLeft: "7%",
+        marginTop: 5,
+        textAlign: "center",
+        paddingVertical: 10,
     },
     loadingOverlay:{
         ...StyleSheet.absoluteFillObject,

@@ -17,17 +17,17 @@ const RegisterScreen = () => {
     const [errors, setErrors] = useState<{ fullname?: string; email?: string; phone?: string; password?: string }>({});
     const [loading, setLoading] = useState(false);
     
-        // Hàm kiểm tra email hợp lệ
+
         const validateEmail = (email: string) => {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         };
     
-        // Hàm kiểm tra số điện thoại hợp lệ (chỉ chứa số, độ dài 9-11 số)
+
         const validatePhone = (phone: string) => {
             return /^[0-9]{9,11}$/.test(phone);
         };
     
-        // Hàm kiểm tra mật khẩu hợp lệ (tối thiểu 6 ký tự)
+
         const validatePassword = (password: string) => {
             return password.length >= 6;
         };
@@ -39,30 +39,30 @@ const RegisterScreen = () => {
 
         // Kiểm tra họ tên
         if (!fullname.trim()) {
-            newErrors.fullname = "Full name is required";
+            newErrors.fullname = "Vui lòng nhập đầy đủ thông tin";
         } else if (fullname.trim().split(" ").length < 2) {
-            newErrors.fullname = "Please enter at least two words";
+            newErrors.fullname = "Vui lòng nhập ít nhất hai từ";
         }
 
         // Kiểm tra email
         if (!email.trim()) {
-            newErrors.email = "Email is required";
+            newErrors.email = "Vui lòng nhập đầy đủ thông tin";
         } else if (!validateEmail(email)) {
-            newErrors.email = "Invalid email format";
+            newErrors.email = "Định dạng email không hợp lệ";
         }
 
         // Kiểm tra số điện thoại
         if (!phone.trim()) {
-            newErrors.phone = "Phone number is required";
+            newErrors.phone = "Vui lòng nhập đầy đủ thông tin";
         } else if (!validatePhone(phone)) {
-            newErrors.phone = "Invalid phone number (9-11 digits)";
+            newErrors.phone = "Số điện thoại không hợp lệ 10 chữ số";
         }
 
         // Kiểm tra mật khẩu
         if (!password.trim()) {
-            newErrors.password = "Password is required";
+            newErrors.password = "Vui lòng nhập đầy đủ thông tin";
         } else if (!validatePassword(password)) {
-            newErrors.password = "Password must be at least 6 characters";
+            newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
         }
 
         // Nếu có lỗi, hiển thị lỗi và dừng đăng ký
@@ -100,14 +100,14 @@ const RegisterScreen = () => {
                 <View>
                     <View style = {[styles.logo]}>
                         <Image source = {require("../../assets/logoFly.png")}/>
-                        <Text style = {[styles.title]}>Register Now</Text>
-                        <Text style = {styles.text}>Enter your information below</Text>
+                        <Text style = {[styles.title]}>Đăng ký ngay</Text>
+                        <Text style = {styles.text}>Nhập thông tin của bạn bên dưới</Text>
                     </View>
 
                     <View style = {styles.infoRegister}>
                         <ShareInput
                             label="Full Name"
-                            placeholder="Enter Fullname"
+                            placeholder="Họ và tên đầy đủ"
                             onChangeText={(text) =>{
                                 setFullName(text);
                                 setErrors({...errors, fullname: ""})
@@ -119,7 +119,7 @@ const RegisterScreen = () => {
 
                         <ShareInput
                             label="Email Address"
-                            placeholder="Enter Email"
+                            placeholder="Nhập địa chỉ email"
                             onChangeText={(text) =>{
                                 setEmail(text);
                                 setErrors({...errors, email: ""})
@@ -131,7 +131,7 @@ const RegisterScreen = () => {
 
                         <ShareInput
                             label="Password"
-                            placeholder="Enter password"
+                            placeholder="Nhập mật khẩu"
                             onChangeText={(text) =>{
                                 setPassword(text);
                                 setErrors({...errors, password: ""})
@@ -142,7 +142,7 @@ const RegisterScreen = () => {
 
                         <ShareInput
                             label="Mobile Number"
-                            placeholder="Enter Mobile Number"
+                            placeholder="Nhập số điện thoại"
                             onChangeText={(text) =>{
                                 setPhone(text);
                                 setErrors({...errors, phone: ""})
@@ -154,7 +154,7 @@ const RegisterScreen = () => {
 
 
                         <ShareButton
-                                title="Register"
+                                title="Đăng ký"
                                 onPress={handleRegister}
                                 pressStyle = {styles.btnStyle}
                                 btnStyle ={{justifyContent: "center", alignItems: "center", backgroundColor: AppColors.JAZZBERRY_JAM}}
@@ -167,9 +167,9 @@ const RegisterScreen = () => {
                     
                     <View style = {styles.login}>
 
-                            <Text style = {{fontSize: 15}}>Already a member? </Text>
+                            <Text style = {{fontSize: 15}}>Bạn đã có tài khoản? </Text>
                             <ShareButton
-                                title="Login"
+                                title="Đăng nhập"
                                 tpye="link"
                                 onPress={() => router.navigate("/(auth)/signInScreen")}
                                 textStyle = {{fontSize: 15}}

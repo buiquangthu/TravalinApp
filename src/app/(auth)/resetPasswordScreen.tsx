@@ -55,12 +55,12 @@ const ResetPasswordScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Enter New Password</Text>
-            <Text style={styles.subtitle}>Please enter new password</Text>
+            <Text style={styles.title}>Mật khẩu  mới</Text>
+            <Text style={styles.subtitle}>Vui lòng nhập mật khẩu mới.</Text>
             
             <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder="Mật khẩu mới"
                 // secureTextEntry
                 value={newPassword}
                 onChangeText={setNewPassword}
@@ -69,7 +69,7 @@ const ResetPasswordScreen = () => {
             
             <TextInput
                 style={styles.input}
-                placeholder="Confirm Password"
+                placeholder="Nhập lại mật khẩu"
                 // secureTextEntry
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -79,7 +79,7 @@ const ResetPasswordScreen = () => {
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <ShareButton
-                title={loading ? "Saving..." : "Save"}
+                title={loading ? "Đang kiểm tra..." : "Hoàn tất"}
                 onPress={handleResetPassword}
                 btnStyle={styles.verifyButton}
             />
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     verifyButton: {
         backgroundColor: AppColors.JAZZBERRY_JAM,
         borderRadius: 20,
-        paddingHorizontal: 70,
+        paddingHorizontal: 50,
         marginHorizontal: "25%",
         marginTop: 20,
     },

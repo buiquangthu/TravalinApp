@@ -34,24 +34,24 @@ const TabLayout = () =>{
     >
             <Tabs.Screen name="index"
                 options={{
-                    title: "Home"
+                    title: "Trang chủ"
                 }}
             />
             <Tabs.Screen name="searchScreen"
                 options={{
-                    title: "Search"
+                    title: "Tìm kiếm"
                 }}
             />
 
             <Tabs.Screen name="orderHistoryScreen"
                 options={{
-                    title: "Order History"
+                    title: "Lịch sử đặt vé"
                 }}
             />
 
             <Tabs.Screen name="profileScreen"
                 options={{
-                    title: "Profile"
+                    title: "Cá nhân"
                 }}
             />
             

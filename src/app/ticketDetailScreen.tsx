@@ -48,15 +48,12 @@ const TicketDetailScreen = () => {
     return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
   };
 
-  const formatDate = (str: string) => {
-    const d = new Date(str);
-    return d.toLocaleDateString("vi-VN");
-  };
+
 
   if (loading) return <ActivityIndicator size="large" color={AppColors.LIGHT_BLUE} />;
   if (!ticket) return <Text>Không tìm thấy thông tin vé.</Text>;
 
-  const { flight, bookingCode, passengers, contact, pricing, status } = ticket;
+  const { flight, passengers, contact, pricing, status } = ticket;
 
   const getStatusStyle = () => {
     switch (status) {

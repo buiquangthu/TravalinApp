@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppColors } from "@/utils/constant";
-import ShareInput from "@/components/input/input.share"; // nếu dùng
 import ScreenContainer from "@/components/layout/screenContainer";
 import {bookingService, confirmBooking} from "@/apis/bookingService";
 import { confirmPayment } from "@stripe/stripe-react-native";
@@ -40,17 +39,6 @@ const PaymentScreen = () => {
   const [loading, setLoading] = useState(false);
   
   const total = Number(price);
-
-  // const handleConfirm = () => {
-  //   if (!agreeTerms) {
-  //     Alert.alert("Lưu ý", "Bạn cần đồng ý với điều khoản sử dụng.");
-  //     return;
-  //   }
-
-
-  //   Alert.alert("Thanh toán thành công", `Vé đã được gửi đến ${email}`);
-  //   router.replace("/");
-  // };
 
   const handleCreateBooking = async () => {
     if (loading) return;

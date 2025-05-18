@@ -23,6 +23,7 @@ interface Props {
   recentSearches: Airport[];
   airportList: Airport[];
   title?: string;
+  onClear?: () => void;
 }
 
 const AirportSelectorModal: React.FC<Props> = ({
@@ -32,6 +33,7 @@ const AirportSelectorModal: React.FC<Props> = ({
   recentSearches,
   airportList,
   title = "Chọn sân bay",
+  onClear,
 }) => {
   const [keyword, setKeyword] = useState("");
 
@@ -61,6 +63,7 @@ const AirportSelectorModal: React.FC<Props> = ({
               <Text style={styles.close}>✕</Text>
             </Pressable>
           </View>
+
 
           <TextInput
             placeholder="Tìm mã hoặc tên tỉnh/thành phố..."
@@ -152,6 +155,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
+  clear: {
+    fontSize: 20,
+    color: "#FF3B30",
+    marginRight: 12,
+  },
+  
 });
 
 export default AirportSelectorModal;

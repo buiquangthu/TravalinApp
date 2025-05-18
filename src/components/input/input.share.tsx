@@ -23,6 +23,8 @@ interface Props {
   secureTextEntry?: boolean;
   onPressIn?: () => void;
   editable?: boolean;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  iconFlex?: "left" | "right";
 }
 
 const ShareInput: React.FC<Props> = ({
@@ -36,6 +38,8 @@ const ShareInput: React.FC<Props> = ({
   secureTextEntry = false,
   onPressIn,
   editable = true,
+  autoCapitalize = "none",
+  iconFlex = "right",
 }) => {
   const [isSecure, setIsSecure] = useState(secureTextEntry);
 
@@ -46,10 +50,10 @@ const ShareInput: React.FC<Props> = ({
       <View
         style={[
           styles.inputWrapper,
-          !label && { alignItems: "center" }, // 👈 nếu không có label thì căn giữa input
+          !label && { alignItems: "center" },
         ]}
       >
-        {icon && <View style={{ marginRight: 6 }}>{icon}</View>}
+        {iconFlex === "left" && icon && <View style={{ marginRight: 6 }}>{icon}</View>}
         <TextInput
           placeholder={placeholder}
           placeholderTextColor={AppColors.GRAY}
@@ -58,21 +62,38 @@ const ShareInput: React.FC<Props> = ({
           keyboardType={keyboadType}
           secureTextEntry={isSecure}
           editable={editable}
+          autoCapitalize={autoCapitalize}
           style={[
             styles.input,
             !!value && styles.inputFilled,
-            { opacity: editable ? 1 : 0.8 },
           ]}
         />
-        {secureTextEntry && value && (
-          <FontAwesome
-            name={isSecure ? "eye-slash" : "eye"}
-            size={20}
-            color={AppColors.GRAY}
-            style={{ marginLeft: 10 }}
-            onPress={() => setIsSecure(!isSecure)}
-          />
-        )}
+
+
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+          {value && editable && !secureTextEntry && (
+            <Pressable onPress={() => onChangeText?.("")}>
+              <FontAwesome
+                name="times-circle"
+                size={20}
+                color= {AppColors.GRAY}
+                style={{ marginLeft: 10, marginTop: 7 }}
+              />
+            </Pressable>
+          )}
+
+
+          {secureTextEntry && value && (
+            <FontAwesome
+              name={isSecure ? "eye-slash" : "eye"}
+              size={20}
+              color={AppColors.GRAY}
+              style={{ marginLeft: 10 }}
+              onPress={() => setIsSecure(!isSecure)}
+            />
+          )}
+        </View>
       </View>
     </Pressable>
   );
@@ -90,7 +111,7 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flexDirection: "row",
-    alignItems: "flex-start", // mặc định khi có label
+    alignItems: "flex-start", 
     height: 40,
   },
   input: {
@@ -104,7 +125,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   inputFilled: {
-    // fontWeight: "bold",
+    fontWeight: "bold",
     fontSize: 14,
   },
 });

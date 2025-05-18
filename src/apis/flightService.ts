@@ -26,7 +26,7 @@ const flightService = {
             throw error;
         }
     },
-    // flightService.ts
+   
     searchFlights: async (params: { originAirportCode?: string; destinationAirportCode?: string; date?: string }) => {
         try {
         const response = await axiosClient.post("/flights/search", params);

@@ -46,6 +46,24 @@ const DropdownInput: React.FC<Props> = ({
       </Pressable>
 
       <Modal transparent visible={visible} animationType="fade">
+        <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
+          <View style={styles.modalBox}>
+            <ScrollView>
+              {options.map((item) => (
+                <TouchableOpacity
+                  key={item}
+                  style={styles.option}
+                  onPress={() => handleSelect(item)}
+                >
+                  <Text style={styles.optionText}>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* <Modal transparent visible={visible} animationType="fade">
         <ScrollView>
         <Pressable style={styles.overlay} onPress={() => setVisible(false)}>
           <View style={styles.modalBox}>
@@ -61,7 +79,7 @@ const DropdownInput: React.FC<Props> = ({
           </View>
         </Pressable>
         </ScrollView>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

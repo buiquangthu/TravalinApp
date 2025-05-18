@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-        color: AppColors.WHITE, // Mặc định là màu trắng để hiển thị tốt trên nền tối
+        color: AppColors.WHITE,
         fontWeight: "600"
     }
 })

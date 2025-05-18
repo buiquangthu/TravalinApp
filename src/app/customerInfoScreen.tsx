@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Pressable,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
@@ -15,51 +16,40 @@ import ScreenContainer from "@/components/layout/screenContainer";
 
 const CustomerInfoScreen = () => {
   const router = useRouter();
-  const { passengers, price, flightId, totalPrice} = useLocalSearchParams();
-  // const numPassengers = Number(passengers) || 1;
+
+  const [contactErrors, setContactErrors] = useState({
+    contactLastName: false,
+    contactName: false,
+    phone: false,
+    email: false,
+  });
+
+  const { passengers, price, flightId, totalPrice } = useLocalSearchParams();
+
   const pricePerPassenger = Number(price) || 0;
-  // const totalPrice = numPassengers * pricePerPassenger;
+
   const parsedPassengers = passengers ? JSON.parse(passengers as string) : { adult: 1, child: 0, baby: 0 };
 
-  const numPassengers =
-  (parsedPassengers.adult) +
-  (parsedPassengers.child) +
-  (parsedPassengers.baby);
 
-  // const [passengerData, setPassengerData] = useState(
-  //   Array(numPassengers).fill({
-  //     firstName: "",
-  //     lastName: "",
-  //     dob: null,
-  //     gender: "Nam",
-  //     nationality: "",
-  //     passportNumber: "",
-  //     issuingCountry: "",
-  //     passportExpiry: null,
-  //   })
-  // );
+  const passengerList = [
+    ...Array(parsedPassengers.adult).fill("Người lớn"),
+    ...Array(parsedPassengers.child).fill("Trẻ em"),
+    ...Array(parsedPassengers.baby).fill("Em bé"),
+  ];
 
-  // Parse passengers
-
-const passengerList = [
-  ...Array(parsedPassengers.adult).fill("Người lớn"),
-  ...Array(parsedPassengers.child).fill("Trẻ em"),
-  ...Array(parsedPassengers.baby).fill("Em bé"),
-];
-
-// Khởi tạo state dựa trên số lượng hành khách
-const [passengerData, setPassengerData] = useState(
-  passengerList.map(() => ({
-    firstName: "",
-    lastName: "",
-    dob: null,
-    gender: "Nam",
-    nationality: "",
-    passportNumber: "",
-    issuingCountry: "",
-    passportExpiry: null,
-  }))
-);
+  // Khởi tạo state dựa trên số lượng hành khách
+  const [passengerData, setPassengerData] = useState(
+    passengerList.map(() => ({
+      firstName: "",
+      lastName: "",
+      dob: null,
+      gender: "Nam",
+      nationality: "",
+      passportNumber: "",
+      issuingCountry: "",
+      passportExpiry: null,
+    }))
+  );
 
 
   const formatCurrency = (num: number) =>
@@ -77,7 +67,41 @@ const [passengerData, setPassengerData] = useState(
   const [email, setEmail] = useState("");
 
   const handleContinue = () => {
-    //có thể thêm validate ở đây nếu cần
+
+
+    // Validate hành khách
+    for (let i = 0; i < passengerData.length; i++) {
+      const p = passengerData[i];
+      if (!p.firstName || !p.lastName || !p.dob) {
+        Alert.alert("Thông báo", `Vui lòng nhập đầy đủ họ tên và ngày sinh`);
+        return;
+      }
+
+      const isAdult = passengerList[i] === "Người lớn";
+      const isForeign = p.nationality && p.nationality !== "Việt Nam";
+
+      if (isAdult && isForeign) {
+        if (!p.passportNumber || !p.issuingCountry || !p.passportExpiry) {
+          Alert.alert("Thông báo", `Vui lòng nhập đầy đủ thông tin hộ chiếu`);
+          return;
+        }
+      }
+    }
+
+    const newErrors = {
+      contactLastName: !contactLastName,
+      contactName: !contactName,
+      phone: !phone,
+      email: !email,
+    };
+
+    setContactErrors(newErrors);
+
+    if (Object.values(newErrors).some(Boolean)) {
+      Alert.alert("Thông báo", "Vui lòng nhập đầy đủ thông tin liên hệ.");
+      return;
+    }
+
     router.push({
       pathname: "/paymentScreen",
       params: {
@@ -95,65 +119,81 @@ const [passengerData, setPassengerData] = useState(
   return (
     <ScreenContainer title="Thông tin khách hàng">
       <ScrollView contentContainerStyle={styles.container}>
-      {/* <Text style={styles.sectionTitle}>Thông tin hành khách</Text> */}
 
-      {/* {passengerData.map((_, index) => (
-        <PassengerForm
-          key={index}
-          index={index}
-          label={`Điền thông tin`}
-          onChange={handlePassengerChange}
+        {passengerList.map((type, index) => (
+          <PassengerForm
+            key={index}
+            index={index}
+            label={type}
+            onChange={handlePassengerChange}
+          />
+        ))}
+
+
+        <Text style={styles.sectionTitle}>Thông tin liên hệ</Text>
+
+        <TextInput
+          style={[
+            styles.input,
+            contactErrors.contactLastName && { borderColor: "red" },
+          ]}
+          placeholder="Họ"
+          value={contactLastName}
+          onChangeText={(text) => {
+            setContactLastName(text);
+            if (text) setContactErrors((prev) => ({ ...prev, contactLastName: false }));
+          }}
         />
-      ))} */}
-
-      {passengerList.map((type, index) => (
-        <PassengerForm
-          key={index}
-          index={index}
-          label={type}
-          onChange={handlePassengerChange}
+        <TextInput
+          style={[
+            styles.input,
+            contactErrors.contactLastName && { borderColor: "red" },
+          ]}
+          placeholder="Tên đệm và tên"
+          value={contactName}
+          onChangeText={(text) => {
+            setContactName(text);
+            if (text) setContactErrors((prev) => ({ ...prev, contactLastName: false }));
+          }}
         />
-      ))}
+        <TextInput
+          style={[
+            styles.input,
+            contactErrors.contactLastName && { borderColor: "red" },
+          ]}
+          placeholder="Số điện thoại liên hệ"
+          keyboardType="phone-pad"
+          value={phone}
+          onChangeText={(text) => {
+            setPhone(text);
+            if (text) setContactErrors((prev) => ({ ...prev, contactLastName: false }));
+          }}
+        />
+        <TextInput
+          style={[
+            styles.input,
+            contactErrors.contactLastName && { borderColor: "red" },
+          ]}
+          placeholder="Nhập email nhận thông tin vé"
+          keyboardType="email-address"
+          value={email}
+          autoCapitalize="none"
 
+          onChangeText={(text) => {
+            setEmail(text);
+            if (text) setContactErrors((prev) => ({ ...prev, contactLastName: false }));
+          }}
+        />
 
-      <Text style={styles.sectionTitle}>Thông tin liên hệ</Text>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Tổng số tiền</Text>
+          <Text style={styles.totalPrice}>{formatCurrency(Number(totalPrice))}</Text>
+        </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Họ"
-        value={contactLastName}
-        onChangeText={setContactLastName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Tên đệm và tên"
-        value={contactName}
-        onChangeText={setContactName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Số điện thoại"
-        keyboardType="phone-pad"
-        value={phone}
-        onChangeText={setPhone}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>Tổng số tiền</Text>
-        <Text style={styles.totalPrice}>{formatCurrency(Number(totalPrice))}</Text>
-      </View>
-
-      <Pressable style={styles.continueButton} onPress={handleContinue}>
-        <Text style={styles.continueText}>Tiếp tục</Text>
-      </Pressable>
-    </ScrollView>
+        <Pressable style={styles.continueButton} onPress={handleContinue}>
+          <Text style={styles.continueText}>Tiếp tục</Text>
+        </Pressable>
+      </ScrollView>
     </ScreenContainer>
   );
 };

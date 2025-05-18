@@ -37,17 +37,27 @@ interface Flight {
   price: number;
   stops: number;
   flightClass: string;
+  finalPrice: number;
+  originalPrice: number;
 }
 
 const SearchResultScreen = () => {
 
   const router = useRouter();
+
   const {
     origin,
     destination,
     departureDate,
     passengers,
   } = useLocalSearchParams();
+
+  const params = useLocalSearchParams();
+
+
+  // useEffect(() => {
+  //   console.log("Params nhận từ màn SearchScreen:", params);
+  // }, []);
 
   const [loading, setLoading] = useState(true);
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -56,19 +66,14 @@ const SearchResultScreen = () => {
   const scaleAnimations = useMemo(() => Array.from({ length: 30 }, () => new Animated.Value(1)), []);
 
   const passengerObj = passengers ? JSON.parse(passengers as string) : { adult: 1, child: 0, baby: 0 };
-  const passengerCount = passengerObj.adult + passengerObj.child + passengerObj.baby;
 
-  // const passengerCount = useMemo(() => {
-  //   const match = (passengers as string)?.match(/\d+/);
-  //   return match ? parseInt(match[0], 10) : 1;
-  // }, [passengers]);
+  const baseDate = departureDate ? new Date(departureDate as string) : new Date();
 
   const dates = useMemo(() => {
     const result = [];
-    const today = new Date();
     for (let i = 0; i < 30; i++) {
-      const current = new Date(today);
-      current.setDate(today.getDate() + i);
+      const current = new Date(baseDate);
+      current.setDate(baseDate.getDate() + i);
       result.push({
         label: format(current, "EEEE", { locale: vi }),
         date: format(current, "dd/MM/yyyy"),
@@ -76,7 +81,7 @@ const SearchResultScreen = () => {
       });
     }
     return result;
-  }, []);
+  }, [baseDate]);
 
   useEffect(() => {
     const fetchFlights = async () => {
@@ -84,7 +89,7 @@ const SearchResultScreen = () => {
       const rawParams = {
         originAirportCode: origin,
         destinationAirportCode: destination,
-        date: format(dates[selectedDateIndex].fullDate, "yyyy-MM-dd"),
+        departureDate: format(dates[selectedDateIndex].fullDate, "yyyy-MM-dd"),
       };
       const params = Object.fromEntries(
         Object.entries(rawParams).filter(([_, v]) => v !== undefined && v !== null && v !== "")
@@ -127,7 +132,10 @@ const SearchResultScreen = () => {
       departureTime={formatTime(item.departureDatetime)}
       arrivalTime={formatTime(item.arrivalDatetime)}
       duration={item.duration}
-      price={item.price}
+      price={item.finalPrice}
+      originalPrice={
+        item.originalPrice > item.finalPrice ? item.originalPrice : undefined
+      }
       onPress={() => setSelectedFlight(item)}
     />
   );
@@ -191,16 +199,16 @@ const SearchResultScreen = () => {
         contentContainerStyle={{ paddingBottom: 30 }}
       />
 
-    <FlightDetailModal
-      visible={!!selectedFlight}
-      flight={selectedFlight}
-      passengers={{
-        adult: passengerObj.adult,
-        child: passengerObj.child,
-        baby: passengerObj.baby
-      }}
-      onClose={() => setSelectedFlight(null)}
-    />
+      <FlightDetailModal
+        visible={!!selectedFlight}
+        flight={selectedFlight}
+        passengers={{
+          adult: passengerObj.adult,
+          child: passengerObj.child,
+          baby: passengerObj.baby
+        }}
+        onClose={() => setSelectedFlight(null)}
+      />
     </View>
   );
 };

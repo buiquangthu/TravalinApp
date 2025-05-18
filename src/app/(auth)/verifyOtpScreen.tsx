@@ -31,13 +31,13 @@ const VerifyOtpScreen = () => {
         const otpCode = otp.join("");
 
         if (otpCode.length !== 5) {
-            setError("OTP must be 5 digits.");
+            setError("OTP phải có 5 số.");
             return;
         }
         
         setLoading(true);
         try {
-            console.log("Send OTP: ", {email, otp: otpCode})
+            // console.log("Send OTP: ", {email, otp: otpCode})
             const response = await authService.verifyOtp({
                 email,
                 otp: otpCode,
@@ -46,18 +46,18 @@ const VerifyOtpScreen = () => {
                 // router.push("/(auth)/resetPasswordScreen");
                 router.push({pathname: "/(auth)/resetPasswordScreen", params: {email}});
             } else {
-                setError("Invalid OTP. Please try again.");
+                setError("OTP không hợp lệ. Vui lòng thử lại.");
             }
         } catch (error) {
-            setError("Failed to verify OTP. Please try again.");
+            setError("Mã OTP của bạn đã hết hạn. Vui lòng thử lại.");
         }
         setLoading(false);
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Enter OTP Code</Text>
-            <Text style={styles.subtitle}>OTP code has been sent to {email}</Text>
+            <Text style={styles.title}>Vui lòng nhập OTP Code</Text>
+            <Text style={styles.subtitle}>Mã OTP đã được gửi đến email "{email}"</Text>
             
             <View style={styles.otpContainer}>
                 {otp.map((digit, index) => (

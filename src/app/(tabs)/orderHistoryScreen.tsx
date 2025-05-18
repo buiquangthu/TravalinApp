@@ -35,7 +35,7 @@ const MyTicketsScreen = () => {
   }, []);
 
   const groupByMonthYear = (tickets: any[]) => {
-    if (!Array.isArray(tickets)) return {}; // tránh lỗi nếu undefined
+    if (!Array.isArray(tickets)) return {}; 
     return tickets.reduce((acc, ticket) => {
       const date = new Date(ticket.date);
       const key = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;

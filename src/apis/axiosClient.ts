@@ -4,8 +4,8 @@ import axios from 'axios';
 const axiosClient = axios.create({
     // baseURL: 'http://192.168.1.16:8080/flight_booking',
     // baseURL: 'http://192.168.7.221:8080/flight_booking', // A51
-    baseURL: 'http://192.168.1.38:8080/flight_booking',
-    // baseURL: 'http://192.168.88.101:8080/flight_booking',
+    // baseURL: 'http://192.168.1.38:8080/flight_booking',
+    baseURL: 'http://192.168.88.101:8080/flight_booking',
     headers: {
         'Content-Type': 'application/json',
     },

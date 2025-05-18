@@ -23,11 +23,11 @@ const ForgotPassword = () =>{
         setErrors("");
         setMessage("");
         if(!email){
-            setErrors("Email is required");
+            setErrors("Vui lòng nhập địa chỉ email của bạn");
             return;
         }
         if(!validateEmail(email)){
-            setErrors("Invalid email format");
+            setErrors("Định dạng email không hợp lệ");
             return;
         }
         setLoading(true);
@@ -38,18 +38,29 @@ const ForgotPassword = () =>{
             // console.log("Forgot Password successful: ", response.data);
             
             if(response.data === "OTP has been sent to your email"){
-                setMessage("Email sent successfully");
+                setMessage("Vui lòng kiểm tra email của bạn để đặt lại mật khẩu");
                 setTimeout(() => {
                     setMessage("");
                     router.push({pathname: "/(auth)/verifyOtpScreen", params: {email}});
                 }, 2000)
-            }else{
-                setErrors("Email not found. Please try again");
-            }
 
-        }catch(error){
-            console.error(error);
-            setErrors("Failed to send email");
+            }
+            // else{
+            //     setErrors("Email not found. Please try again");
+            // }
+
+        }catch(error: any){
+            // console.error(error);
+            // console.log()
+            // setErrors("Failed to send email");
+            // console.error("Forgot password error:", error);
+
+            const errorCode = error?.response?.data?.errorCode;
+            if (errorCode === "USER_NOT_FOUND") {
+              setErrors("Email không tồn tại. Vui lòng nhập lại");
+            } else {
+              setErrors("Gửi email thất bại. Vui lòng thử lại sau");
+            }
         }
         setLoading(false);
     }
@@ -62,13 +73,13 @@ const ForgotPassword = () =>{
                 extraHeight = {20}
             >
                 <View style ={styles.Box}>
-                    <Text style = {styles.title}>Forgot Password</Text>
-                    <Text style = {styles.text}>Enter your email address below to reset your password</Text>
+                    <Text style = {styles.title}>Quên mật khẩu</Text>
+                    <Text style = {styles.text}>Nhập địa chỉ email của bạn bên dưới để đặt lại mật khẩu</Text>
 
-                    <Text style= {styles.label}>Email Address</Text>
+                    <Text style= {styles.label}>Địa chỉ email</Text>
                     <ShareInput
                             // label="Email Address"
-                            placeholder="Enter Email"
+                            placeholder="Vui lòng nhập địa chỉ email của bạn"
                             onChangeText={setEmail}
                             value={email}
                             keyboadType="email-address"
